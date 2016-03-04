@@ -18,11 +18,13 @@ import com.bitbudai.fermat_cht_android_sub_app_chat_bitdubai.models.ChatMessage;
 import com.bitbudai.fermat_cht_android_sub_app_chat_bitdubai.sessions.ChatSession;
 import com.bitbudai.fermat_cht_android_sub_app_chat_bitdubai.settings.ChatSettings;
 import com.bitdubai.fermat_android_api.layer.definition.wallet.AbstractFermatFragment;
+import com.bitdubai.fermat_android_api.ui.Views.PresentationDialog;
 import com.bitdubai.fermat_api.layer.all_definition.components.enums.PlatformComponentType;
 import com.bitdubai.fermat_api.layer.all_definition.navigation_structure.enums.Activities;
 import com.bitdubai.fermat_api.layer.all_definition.settings.structure.SettingsManager;
 import com.bitdubai.fermat_api.layer.dmp_engine.sub_app_runtime.enums.SubApps;
 import com.bitdubai.fermat_cht_android_sub_app_chat_bitdubai.R;
+import com.bitdubai.fermat_cht_api.all_definition.exceptions.CantGetChatUserIdentityException;
 import com.bitdubai.fermat_cht_api.layer.middleware.interfaces.Contact;
 import com.bitdubai.fermat_cht_api.layer.middleware.utils.ContactImpl;
 import com.bitdubai.fermat_cht_api.layer.sup_app_module.interfaces.ChatManager;
@@ -378,5 +380,29 @@ public class ChatFragment extends AbstractFermatFragment {//ActionBarActivity
 //        return super.onOptionsItemSelected(item);
 //    }
 
+    private void showHelpDialog() throws CantGetChatUserIdentityException {
+        PresentationDialog presentationDialog;
+
+        if (chatManager.getChatUserIdentities().isEmpty()){
+            presentationDialog = new PresentationDialog.Builder(getActivity(), chatSession)
+                    .setTemplateType(PresentationDialog.TemplateType.TYPE_PRESENTATION)
+                    .setBannerRes(R.drawable.cht_banner)
+                    .setIconRes(R.drawable.cht_profile_icon)
+                    .setBody(0)             //int
+                    .setSubTitle(0)         //int
+                    .setTextFooter(0)       //int
+                    .build();
+
+        } else {
+            presentationDialog = new PresentationDialog.Builder(getActivity(), chatSession)
+                    .setSubTitle(0)         //int
+                    .setBody(0)             //int
+                    .setTextFooter(0)       //int
+                    .setTemplateType(PresentationDialog.TemplateType.TYPE_PRESENTATION_WITHOUT_IDENTITIES)
+                    .setBannerRes(R.drawable.cht_banner)
+                    .setIconRes(R.drawable.cht_profile_icon)
+                    .build();
+        }
+    }
 
 }
