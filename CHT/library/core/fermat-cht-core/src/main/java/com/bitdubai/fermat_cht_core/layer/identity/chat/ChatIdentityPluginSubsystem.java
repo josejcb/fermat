@@ -9,19 +9,19 @@ import com.bitdubai.fermat_core_api.layer.all_definition.system.exceptions.CantS
 /**
  * Created by franklin on 29/03/16.
  */
-public class ChatIdentityPluginSubsystem extends AbstractPluginSubsystem {
-
-    public ChatIdentityPluginSubsystem() {
-        super(new PluginReference(Plugins.CHAT_IDENTITY));
-    }
-
-    @Override
-    public void start() throws CantStartSubsystemException {
-        try {
-            registerDeveloper(new DeveloperBitDubai());
-        } catch (Exception e) {
-            System.err.println("Exception: " + e.getMessage());
-            throw new CantStartSubsystemException(e, null, null);
-        }
-    }
-}
+//public class ChatIdentityPluginSubsystem extends AbstractPluginSubsystem {
+//
+//    public ChatIdentityPluginSubsystem() {
+//        super(new PluginReference(Plugins.CHAT_IDENTITY));
+//    }
+//
+//    @Override
+//    public void start() throws CantStartSubsystemException {
+//        try {
+//            registerDeveloper(new DeveloperBitDubai());
+//        } catch (Exception e) {
+//            System.err.println("Exception: " + e.getMessage());
+//            throw new CantStartSubsystemException(e, null, null);
+//        }
+//    }
+//}

@@ -1809,7 +1809,7 @@ public class ChatMiddlewareDatabaseDao {
         record.setStringValue(ChatMiddlewareDatabaseConstants.CHATS_CREATION_DATE_COLUMN_NAME, chat.getDate().toString());
         record.setStringValue(ChatMiddlewareDatabaseConstants.CHATS_LAST_MESSAGE_DATE_COLUMN_NAME, chat.getLastMessageDate().toString());
         record.setStringValue(ChatMiddlewareDatabaseConstants.CHATS_CONTACT_ASSOCIATED_LIST, chat.getContactListString());
-        record.setStringValue(ChatMiddlewareDatabaseConstants.CHATS_TYPE_CHAT, chat.getTypeChat().getCode());
+ //       record.setStringValue(ChatMiddlewareDatabaseConstants.CHATS_TYPE_CHAT, chat.getTypeChat().getCode());
 
         return record;
     }

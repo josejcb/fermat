@@ -158,15 +158,15 @@ public class ChatMock implements Chat {
 
     }
 
-    @Override
-    public TypeChat getTypeChat() {
-        return null;
-    }
-
-    @Override
-    public void setTypeChat(TypeChat typeChat) {
-
-    }
+//    @Override
+//    public TypeChat getTypeChat() {
+//        return null;
+//    }
+//
+//    @Override
+//    public void setTypeChat(TypeChat typeChat) {
+//
+//    }
 
     @Override
     public Group getGroupAssociated() {

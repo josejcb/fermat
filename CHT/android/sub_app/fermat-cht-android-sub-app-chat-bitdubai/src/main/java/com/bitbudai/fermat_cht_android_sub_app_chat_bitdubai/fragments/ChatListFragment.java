@@ -358,7 +358,7 @@ public class ChatListFragment extends AbstractFermatFragment{
                 typeMessage, noReadMsgs, imgId, errorManager);
         list=(ListView)layout.findViewById(R.id.list);
         list.setAdapter(adapter);
-        registerForContextMenu(list);
+        //registerForContextMenu(list);
         list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -438,7 +438,7 @@ public class ChatListFragment extends AbstractFermatFragment{
         if(id == ChtConstants.CHT_ICON_HELP){
             setUpHelpChat(false);
         }
-        if (id == R.id.menu_search) {
+        /*if (id == R.id.menu_search) {
             //changeActivity(Activities.CHT_CHAT_OPEN_CONTACTLIST, appSession.getAppPublicKey());
             return true;
         }
@@ -457,11 +457,11 @@ public class ChatListFragment extends AbstractFermatFragment{
         if (id == R.id.menu_delete_all_chats) {
             //changeActivity(Activities.CHT_CHAT_OPEN_CONTACTLIST, appSession.getAppPublicKey());
            return true;
-        }
-        /*if (id == R.id.menu_switch_profile) {
+        }*/
+        if (id == R.id.menu_switch_profile) {
             changeActivity(Activities.CHT_CHAT_OPEN_PROFILELIST, appSession.getAppPublicKey());
             return true;
-        }*/
+        }
         if (id == R.id.menu_error_report) {
             changeActivity(Activities.CHT_CHAT_OPEN_SEND_ERROR_REPORT, appSession.getAppPublicKey());
             return true;
@@ -469,77 +469,77 @@ public class ChatListFragment extends AbstractFermatFragment{
         return super.onOptionsItemSelected(item);
     }
 
-    @Override
-    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
-        super.onCreateContextMenu(menu, v, menuInfo);
-        v.setBackgroundColor(Color.WHITE);
-        if (v.getId()==R.id.list) {
-            MenuInflater inflater = new MenuInflater(getContext());
-            inflater.inflate(R.menu.chat_list_context_menu, menu);
-        }
-        // Get the info on which item was selected
-        AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) menuInfo;
-        try{
-            // Set the info of chat selected in session
-            appSession.setData(ChatSession.CHAT_DATA, chatManager.getChatByChatId(chatId.get(info.position)));
-        }catch(CantGetChatException e) {
-            errorManager.reportUnexpectedSubAppException(SubApps.CHT_CHAT, UnexpectedSubAppExceptionSeverity.DISABLES_SOME_FUNCTIONALITY_WITHIN_THIS_FRAGMENT, e);
-        }catch (Exception e){
-            errorManager.reportUnexpectedSubAppException(SubApps.CHT_CHAT, UnexpectedSubAppExceptionSeverity.DISABLES_SOME_FUNCTIONALITY_WITHIN_THIS_FRAGMENT, e);
-        }
-    }
-
-    @Override
-    public boolean onContextItemSelected(MenuItem item) {
-        AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
-        int id =item.getItemId();
-        if (id == R.id.menu_delete_chat) {
-            try {
-                final cht_dialog_yes_no alert = new cht_dialog_yes_no(getActivity(),appSession,null,null,null);
-                alert.setTextTitle("Delete Chat");
-                alert.setTextBody("Do you want to delete this chat?");
-                alert.setType("delete-chat");
-                alert.show();
-                alert.setOnDismissListener(new DialogInterface.OnDismissListener() {
-                    @Override
-                    public void onDismiss(DialogInterface dialog) {
-                        try {
-                            // Get the info of chat selected from session
-                            Chat chat = chatSession.getSelectedChat();
-                            // Delete chat and refresh view
-                            chatManager.deleteChat(chat);
-                            updatevalues();
-                            adapter.refreshEvents(contactName, message, dateMessage, chatId, contactId, status, typeMessage, noReadMsgs, imgId);
-                        } catch (CantDeleteChatException e) {
-                            errorManager.reportUnexpectedSubAppException(SubApps.CHT_CHAT, UnexpectedSubAppExceptionSeverity.DISABLES_SOME_FUNCTIONALITY_WITHIN_THIS_FRAGMENT, e);
-                        }catch (Exception e) {
-                            errorManager.reportUnexpectedSubAppException(SubApps.CHT_CHAT, UnexpectedSubAppExceptionSeverity.DISABLES_SOME_FUNCTIONALITY_WITHIN_THIS_FRAGMENT, e);
-                        }
-                    }
-                });
-
-
-            }catch (Exception e){
-                errorManager.reportUnexpectedSubAppException(SubApps.CHT_CHAT, UnexpectedSubAppExceptionSeverity.DISABLES_SOME_FUNCTIONALITY_WITHIN_THIS_FRAGMENT, e);
-            }
-            return true;
-        }
-        if (id == R.id.menu_clean_chat) {
-            //changeActivity(Activities.CHT_CHAT_OPEN_CONTACTLIST, appSession.getAppPublicKey());
-            return true;
-        }
-        if (id == R.id.menu_delete_all_chats) {
-            //changeActivity(Activities.CHT_CHAT_OPEN_CONTACTLIST, appSession.getAppPublicKey());
-            return true;
-        }
-        if (id == R.id.menu_delete_contact) {
-            //changeActivity(Activities.CHT_CHAT_OPEN_CONTACTLIST, appSession.getAppPublicKey());
-            return true;
-        }
-        if (id == R.id.menu_block_contact) {
-            //changeActivity(Activities.CHT_CHAT_OPEN_CONTACTLIST, appSession.getAppPublicKey());
-            return true;
-        }
-        return super.onContextItemSelected(item);
-    }
+//    @Override
+//    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
+//        super.onCreateContextMenu(menu, v, menuInfo);
+//        v.setBackgroundColor(Color.WHITE);
+//        if (v.getId()==R.id.list) {
+//            MenuInflater inflater = new MenuInflater(getContext());
+//            inflater.inflate(R.menu.chat_list_context_menu, menu);
+//        }
+//        // Get the info on which item was selected
+//        AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) menuInfo;
+//        try{
+//            // Set the info of chat selected in session
+//            appSession.setData(ChatSession.CHAT_DATA, chatManager.getChatByChatId(chatId.get(info.position)));
+//        }catch(CantGetChatException e) {
+//            errorManager.reportUnexpectedSubAppException(SubApps.CHT_CHAT, UnexpectedSubAppExceptionSeverity.DISABLES_SOME_FUNCTIONALITY_WITHIN_THIS_FRAGMENT, e);
+//        }catch (Exception e){
+//            errorManager.reportUnexpectedSubAppException(SubApps.CHT_CHAT, UnexpectedSubAppExceptionSeverity.DISABLES_SOME_FUNCTIONALITY_WITHIN_THIS_FRAGMENT, e);
+//        }
+//    }
+//
+//    @Override
+//    public boolean onContextItemSelected(MenuItem item) {
+//        AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
+//        int id =item.getItemId();
+//        if (id == R.id.menu_delete_chat) {
+//            try {
+//                final cht_dialog_yes_no alert = new cht_dialog_yes_no(getActivity(),appSession,null,null,null);
+//                alert.setTextTitle("Delete Chat");
+//                alert.setTextBody("Do you want to delete this chat?");
+//                alert.setType("delete-chat");
+//                alert.show();
+//                alert.setOnDismissListener(new DialogInterface.OnDismissListener() {
+//                    @Override
+//                    public void onDismiss(DialogInterface dialog) {
+//                        try {
+//                            // Get the info of chat selected from session
+//                            Chat chat = chatSession.getSelectedChat();
+//                            // Delete chat and refresh view
+//                            chatManager.deleteChat(chat);
+//                            updatevalues();
+//                            adapter.refreshEvents(contactName, message, dateMessage, chatId, contactId, status, typeMessage, noReadMsgs, imgId);
+//                        } catch (CantDeleteChatException e) {
+//                            errorManager.reportUnexpectedSubAppException(SubApps.CHT_CHAT, UnexpectedSubAppExceptionSeverity.DISABLES_SOME_FUNCTIONALITY_WITHIN_THIS_FRAGMENT, e);
+//                        }catch (Exception e) {
+//                            errorManager.reportUnexpectedSubAppException(SubApps.CHT_CHAT, UnexpectedSubAppExceptionSeverity.DISABLES_SOME_FUNCTIONALITY_WITHIN_THIS_FRAGMENT, e);
+//                        }
+//                    }
+//                });
+//
+//
+//            }catch (Exception e){
+//                errorManager.reportUnexpectedSubAppException(SubApps.CHT_CHAT, UnexpectedSubAppExceptionSeverity.DISABLES_SOME_FUNCTIONALITY_WITHIN_THIS_FRAGMENT, e);
+//            }
+//            return true;
+//        }
+//        if (id == R.id.menu_clean_chat) {
+//            //changeActivity(Activities.CHT_CHAT_OPEN_CONTACTLIST, appSession.getAppPublicKey());
+//            return true;
+//        }
+//        if (id == R.id.menu_delete_all_chats) {
+//            //changeActivity(Activities.CHT_CHAT_OPEN_CONTACTLIST, appSession.getAppPublicKey());
+//            return true;
+//        }
+//        if (id == R.id.menu_delete_contact) {
+//            //changeActivity(Activities.CHT_CHAT_OPEN_CONTACTLIST, appSession.getAppPublicKey());
+//            return true;
+//        }
+//        if (id == R.id.menu_block_contact) {
+//            //changeActivity(Activities.CHT_CHAT_OPEN_CONTACTLIST, appSession.getAppPublicKey());
+//            return true;
+//        }
+//        return super.onContextItemSelected(item);
+//    }
 }

@@ -291,7 +291,7 @@ public class ContactsListFragment extends AbstractFermatFragment implements Cont
                 moduleManager, errorManager, chatSession, appSession, this);
         list=(ListView)layout.findViewById(R.id.list);
         list.setAdapter(adapter);
-        registerForContextMenu(list);
+        //registerForContextMenu(list);
 
         list.setOnItemClickListener(new AdapterView.OnItemClickListener()/*new AdapterView.OnItemClickListener()*/ {
 
@@ -317,7 +317,7 @@ public class ContactsListFragment extends AbstractFermatFragment implements Cont
             }
         });
 
-        /*list.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+        list.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
 
             @Override
             public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
@@ -331,7 +331,7 @@ public class ContactsListFragment extends AbstractFermatFragment implements Cont
                 }
                 return true;
             }
-        });*/
+        });
 
      /*   mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
@@ -445,15 +445,15 @@ public class ContactsListFragment extends AbstractFermatFragment implements Cont
             });
             dialog_conn.show();
             return true;
-        }/*else if (id == R.id.menu_switch_profile) {
+        }else if (id == R.id.menu_switch_profile) {
             changeActivity(Activities.CHT_CHAT_OPEN_PROFILELIST, appSession.getAppPublicKey());
             return true;
-        }*/
-
-        if (id == R.id.menu_search) {
-            //changeActivity(Activities.CHT_CHAT_OPEN_SEND_ERROR_REPORT, appSession.getAppPublicKey());
-            return true;
         }
+
+//        if (id == R.id.menu_search) {
+//            //changeActivity(Activities.CHT_CHAT_OPEN_SEND_ERROR_REPORT, appSession.getAppPublicKey());
+//            return true;
+//        }
 
         if (id == R.id.menu_error_report) {
             changeActivity(Activities.CHT_CHAT_OPEN_SEND_ERROR_REPORT, appSession.getAppPublicKey());
@@ -580,57 +580,57 @@ public class ContactsListFragment extends AbstractFermatFragment implements Cont
         }
     }
 
-    @Override
-    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
-        super.onCreateContextMenu(menu, v, menuInfo);
-        if (v.getId()==R.id.list) {
-            MenuInflater inflater = new MenuInflater(getContext());
-            inflater.inflate(R.menu.contact_list_context_menu, menu);
-        }
-        AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) menuInfo;
-        try{
-            appSession.setData(ChatSession.CONTACT_DATA, chatManager.getContactByContactId(contactid.get(info.position)));
-        }catch(CantGetContactException e) {
-            errorManager.reportUnexpectedSubAppException(SubApps.CHT_CHAT, UnexpectedSubAppExceptionSeverity.DISABLES_SOME_FUNCTIONALITY_WITHIN_THIS_FRAGMENT, e);
-        }catch (Exception e){
-            errorManager.reportUnexpectedSubAppException(SubApps.CHT_CHAT, UnexpectedSubAppExceptionSeverity.DISABLES_SOME_FUNCTIONALITY_WITHIN_THIS_FRAGMENT, e);
-        }
-    }
-
-    @Override
-    public boolean onContextItemSelected(MenuItem item) {
-        AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
-        int id =item.getItemId();
-        if (id == R.id.menu_view_contact) {
-            try {
-                Contact con = chatSession.getSelectedContact();
-                appSession.setData(ChatSession.CONTACT_DATA, chatManager.getContactByContactId(con.getContactId()));
-                changeActivity(Activities.CHT_CHAT_OPEN_CONTACT_DETAIL, appSession.getAppPublicKey());
-            }catch(CantGetContactException e) {
-                errorManager.reportUnexpectedSubAppException(SubApps.CHT_CHAT, UnexpectedSubAppExceptionSeverity.DISABLES_SOME_FUNCTIONALITY_WITHIN_THIS_FRAGMENT, e);
-            }catch (Exception e){
-                errorManager.reportUnexpectedSubAppException(SubApps.CHT_CHAT, UnexpectedSubAppExceptionSeverity.DISABLES_SOME_FUNCTIONALITY_WITHIN_THIS_FRAGMENT, e);
-            }
-            return true;
-        }
-        if (id == R.id.menu_edit_contact) {
-            Contact con = chatSession.getSelectedContact();
-            try {
-                appSession.setData(ChatSession.CONTACT_DATA, chatManager.getContactByContactId(con.getContactId()));
-                changeActivity(Activities.CHT_CHAT_EDIT_CONTACT, appSession.getAppPublicKey());
-            }catch(CantGetContactException e) {
-                errorManager.reportUnexpectedSubAppException(SubApps.CHT_CHAT, UnexpectedSubAppExceptionSeverity.DISABLES_SOME_FUNCTIONALITY_WITHIN_THIS_FRAGMENT, e);
-            }catch (Exception e){
-                errorManager.reportUnexpectedSubAppException(SubApps.CHT_CHAT, UnexpectedSubAppExceptionSeverity.DISABLES_SOME_FUNCTIONALITY_WITHIN_THIS_FRAGMENT, e);
-            }
-            return true;
-        }
-        if (id == R.id.menu_block_contact) {
-            //changeActivity(Activities.CHT_CHAT_OPEN_CONTACTLIST, appSession.getAppPublicKey());
-            return true;
-        }
-        return super.onContextItemSelected(item);
-    }
+//    @Override
+//    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
+//        super.onCreateContextMenu(menu, v, menuInfo);
+//        if (v.getId()==R.id.list) {
+//            MenuInflater inflater = new MenuInflater(getContext());
+//            inflater.inflate(R.menu.contact_list_context_menu, menu);
+//        }
+//        AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) menuInfo;
+//        try{
+//            appSession.setData(ChatSession.CONTACT_DATA, chatManager.getContactByContactId(contactid.get(info.position)));
+//        }catch(CantGetContactException e) {
+//            errorManager.reportUnexpectedSubAppException(SubApps.CHT_CHAT, UnexpectedSubAppExceptionSeverity.DISABLES_SOME_FUNCTIONALITY_WITHIN_THIS_FRAGMENT, e);
+//        }catch (Exception e){
+//            errorManager.reportUnexpectedSubAppException(SubApps.CHT_CHAT, UnexpectedSubAppExceptionSeverity.DISABLES_SOME_FUNCTIONALITY_WITHIN_THIS_FRAGMENT, e);
+//        }
+//    }
+//
+//    @Override
+//    public boolean onContextItemSelected(MenuItem item) {
+//        AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
+//        int id =item.getItemId();
+//        if (id == R.id.menu_view_contact) {
+//            try {
+//                Contact con = chatSession.getSelectedContact();
+//                appSession.setData(ChatSession.CONTACT_DATA, chatManager.getContactByContactId(con.getContactId()));
+//                changeActivity(Activities.CHT_CHAT_OPEN_CONTACT_DETAIL, appSession.getAppPublicKey());
+//            }catch(CantGetContactException e) {
+//                errorManager.reportUnexpectedSubAppException(SubApps.CHT_CHAT, UnexpectedSubAppExceptionSeverity.DISABLES_SOME_FUNCTIONALITY_WITHIN_THIS_FRAGMENT, e);
+//            }catch (Exception e){
+//                errorManager.reportUnexpectedSubAppException(SubApps.CHT_CHAT, UnexpectedSubAppExceptionSeverity.DISABLES_SOME_FUNCTIONALITY_WITHIN_THIS_FRAGMENT, e);
+//            }
+//            return true;
+//        }
+//        if (id == R.id.menu_edit_contact) {
+//            Contact con = chatSession.getSelectedContact();
+//            try {
+//                appSession.setData(ChatSession.CONTACT_DATA, chatManager.getContactByContactId(con.getContactId()));
+//                changeActivity(Activities.CHT_CHAT_EDIT_CONTACT, appSession.getAppPublicKey());
+//            }catch(CantGetContactException e) {
+//                errorManager.reportUnexpectedSubAppException(SubApps.CHT_CHAT, UnexpectedSubAppExceptionSeverity.DISABLES_SOME_FUNCTIONALITY_WITHIN_THIS_FRAGMENT, e);
+//            }catch (Exception e){
+//                errorManager.reportUnexpectedSubAppException(SubApps.CHT_CHAT, UnexpectedSubAppExceptionSeverity.DISABLES_SOME_FUNCTIONALITY_WITHIN_THIS_FRAGMENT, e);
+//            }
+//            return true;
+//        }
+//        if (id == R.id.menu_block_contact) {
+//            //changeActivity(Activities.CHT_CHAT_OPEN_CONTACTLIST, appSession.getAppPublicKey());
+//            return true;
+//        }
+//        return super.onContextItemSelected(item);
+//    }
 
 //    public void goToContactDetail(ChatManager chatManager, ChatModuleManager moduleManager, ChatSession chatSession,
 //                                  FermatSession appSession, ErrorManager errorManager, UUID id){

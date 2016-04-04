@@ -34,7 +34,7 @@ public class ChatImpl implements Chat {
     private Timestamp                   date;
     private Timestamp                   lastMessageDate;
     private List<Contact>               contactAssociated;
-    private TypeChat                    typeChat;
+    //private TypeChat                    typeChat;
 
     /**
      * Constructor without arguments
@@ -79,7 +79,7 @@ public class ChatImpl implements Chat {
         this.status               = status;
         this.date                 = date;
         this.lastMessageDate      = lastMessageDate;
-        this.typeChat             = typeChat;
+        //this.typeChat             = typeChat;
     }
 
     @Override
@@ -257,15 +257,15 @@ public class ChatImpl implements Chat {
 
     }
 
-    @Override
-    public TypeChat getTypeChat() {
-        return typeChat;
-    }
-
-    @Override
-    public void setTypeChat(TypeChat typeChat) {
-        this.typeChat = typeChat;
-    }
+//    @Override
+//    public TypeChat getTypeChat() {
+//        return typeChat;
+//    }
+//
+//    @Override
+//    public void setTypeChat(TypeChat typeChat) {
+//        this.typeChat = typeChat;
+//    }
 
     @Override
     public Group getGroupAssociated() {

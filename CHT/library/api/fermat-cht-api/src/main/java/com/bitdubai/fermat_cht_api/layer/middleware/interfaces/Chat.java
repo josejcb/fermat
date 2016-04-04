@@ -54,8 +54,8 @@ public interface Chat {
     List<Message> getMessagesAsociated();
     void setMessagesAsociated(List<Message> messages);
 
-    TypeChat getTypeChat();
-    void setTypeChat(TypeChat typeChat);
+//    TypeChat getTypeChat();
+//    void setTypeChat(TypeChat typeChat);
 
     Group getGroupAssociated();
     void setGroupAssociated(Group group);

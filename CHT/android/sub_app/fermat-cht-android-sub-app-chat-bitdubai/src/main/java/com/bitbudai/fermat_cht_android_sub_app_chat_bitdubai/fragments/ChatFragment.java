@@ -128,7 +128,7 @@ public class ChatFragment extends AbstractFermatFragment {//ActionBarActivity
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         menu.clear();
         // Inflate the menu items
-        inflater.inflate(R.menu.chat_menu, menu);
+        //inflater.inflate(R.menu.chat_menu, menu);
     }
 
     @Override
