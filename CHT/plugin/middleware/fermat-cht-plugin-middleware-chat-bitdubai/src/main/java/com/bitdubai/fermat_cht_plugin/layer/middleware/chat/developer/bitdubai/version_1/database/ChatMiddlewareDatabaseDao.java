@@ -1189,6 +1189,43 @@ public class ChatMiddlewareDatabaseDao {
         return message;
     }
 
+    public long getLastMessageCount(){
+        Database database = null;
+        try {
+            database = openDatabase();
+            List<Message> messages = new ArrayList<>();
+            DatabaseTable table = getDatabaseTable(ChatMiddlewareDatabaseConstants.MESSAGE_TABLE_NAME);
+            table.addFilterOrder(ChatMiddlewareDatabaseConstants.MESSAGE_COUNT, DatabaseFilterOrder.DESCENDING);
+            table.setFilterTop("1");
+            table.loadToMemory();
+
+            for (DatabaseTableRecord record : table.getRecords()) {
+                final Message message = getMessageTransaction(record);
+
+                messages.add(message);
+            }
+
+            database.closeDatabase();
+
+            if(messages.isEmpty()){
+                System.out.println("**12345 LAST MESSAGE = NO MESSAGE");
+                return 0;
+            }
+
+            System.out.println("**12345 LAST MESSAGE = " + messages.get(0).getCount());
+            return messages.get(0).getCount();
+        }
+        catch (Exception e) {
+            if (database != null)
+                database.closeDatabase();
+            errorManager.reportUnexpectedPluginException(
+                    Plugins.CHAT_MIDDLEWARE,
+                    UnexpectedPluginExceptionSeverity.DISABLES_SOME_FUNCTIONALITY_WITHIN_THIS_PLUGIN,
+                    FermatException.wrapException(e));
+        }
+        return 1;
+    }
+
     public void saveMessage(Message message) throws CantSaveMessageException, DatabaseOperationException
     {
         try
@@ -1198,15 +1235,19 @@ public class ChatMiddlewareDatabaseDao {
             DatabaseTransaction transaction = database.newTransaction();
 
             DatabaseTable table = getDatabaseTable(ChatMiddlewareDatabaseConstants.MESSAGE_TABLE_NAME);
-            DatabaseTableRecord record = getMessageRecord(message);
             DatabaseTableFilter filter = table.getEmptyTableFilter();
+            DatabaseTableRecord record;
             filter.setType(DatabaseFilterType.EQUAL);
             filter.setValue(message.getMessageId().toString());
             filter.setColumn(ChatMiddlewareDatabaseConstants.MESSAGE_FIRST_KEY_COLUMN);
 
-            if (isNewRecord(table, filter))
+            if (isNewRecord(table, filter)) {
+                message.setCount(getLastMessageCount() + 1);
+                record = getMessageRecord(message);
                 transaction.addRecordToInsert(table, record);
+            }
             else {
+            record = getMessageRecord(message);
                 table.addStringFilter(filter.getColumn(), filter.getValue(), filter.getType());
                 transaction.addRecordToUpdate(table, record);
             }
@@ -1826,6 +1867,7 @@ public class ChatMiddlewareDatabaseDao {
         record.setStringValue(ChatMiddlewareDatabaseConstants.MESSAGE_TYPE_COLUMN_NAME, message.getType().getCode());
         record.setStringValue(ChatMiddlewareDatabaseConstants.MESSAGE_MESSAGE_DATE_COLUMN_NAME, message.getMessageDate().toString());
         record.setUUIDValue(ChatMiddlewareDatabaseConstants.MESSAGE_CONTACT_ID, message.getContactId());
+        record.setLongValue(ChatMiddlewareDatabaseConstants.MESSAGE_COUNT, message.getCount());
 
         return record;
     }
@@ -1876,7 +1918,7 @@ public class ChatMiddlewareDatabaseDao {
             table.addStringFilter(filter.getColumn(), filter.getValue(), filter.getType());
 
         table.addFilterOrder(ChatMiddlewareDatabaseConstants.MESSAGE_ID_CHAT_COLUMN_NAME, DatabaseFilterOrder.ASCENDING);
-        table.addFilterOrder(ChatMiddlewareDatabaseConstants.MESSAGE_MESSAGE_DATE_COLUMN_NAME, DatabaseFilterOrder.ASCENDING);
+        table.addFilterOrder(ChatMiddlewareDatabaseConstants.MESSAGE_COUNT, DatabaseFilterOrder.ASCENDING);
 
         table.loadToMemory();
 //
@@ -1977,6 +2019,7 @@ public class ChatMiddlewareDatabaseDao {
         message.setStatus(MessageStatus.getByCode(messageTransactionRecord.getStringValue(ChatMiddlewareDatabaseConstants.MESSAGE_STATUS_COLUMN_NAME)));
         message.setType(TypeMessage.getByCode(messageTransactionRecord.getStringValue(ChatMiddlewareDatabaseConstants.MESSAGE_TYPE_COLUMN_NAME)));
         message.setContactId(messageTransactionRecord.getUUIDValue(ChatMiddlewareDatabaseConstants.MESSAGE_CONTACT_ID));
+        message.setCount(messageTransactionRecord.getIntegerValue(ChatMiddlewareDatabaseConstants.MESSAGE_COUNT));
 
 
         return message;
