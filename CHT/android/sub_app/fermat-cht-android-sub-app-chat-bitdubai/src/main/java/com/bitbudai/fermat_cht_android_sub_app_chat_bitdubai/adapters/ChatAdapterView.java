@@ -17,6 +17,7 @@ import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -310,6 +311,21 @@ public class ChatAdapterView extends LinearLayout {
                 //messageET.setText("");
             }
         });
+
+//        messageET.setOnTouchListener(new OnTouchListener() {
+//            public boolean onTouch(View view, MotionEvent event) {
+//                // TODO Auto-generated method stub
+//                if (view.getId() == R.id.messageEdit) {
+//                    view.getParent().requestDisallowInterceptTouchEvent(true);
+//                    switch (event.getAction() & MotionEvent.ACTION_MASK) {
+//                        case MotionEvent.ACTION_UP:
+//                            view.getParent().requestDisallowInterceptTouchEvent(false);
+//                            break;
+//                    }
+//                }
+//                return false;
+//            }
+//        });
 
         sendBtn.setOnClickListener(new View.OnClickListener() {
             @Override
