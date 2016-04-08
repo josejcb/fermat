@@ -160,12 +160,13 @@ public class cht_dialog_yes_no extends FermatDialog  implements View.OnClickList
                         Toast.makeText(getActivity(), "Contact added", Toast.LENGTH_SHORT).show();
                         //changeActivity(Activities.CHT_CHAT_OPEN_CONTACTLIST, appSession.getAppPublicKey());
                         //dismiss();
-                    } else {
-                        Toast.makeText(getActivity(), "Contact already exist", Toast.LENGTH_SHORT).show();
-
-                        //changeActivity(Activities.CHT_CHAT_OPEN_CONTACTLIST, appSession.getAppPublicKey());
-                        //dismiss();
                     }
+//                    else {
+//                        Toast.makeText(getActivity(), "Contact already exist", Toast.LENGTH_SHORT).show();
+//
+//                        //changeActivity(Activities.CHT_CHAT_OPEN_CONTACTLIST, appSession.getAppPublicKey());
+//                        //dismiss();
+//                    }
                     dismiss();
                     mAdapterCallback.onMethodCallbackContacts();//solution to access to update contacts. j
 
