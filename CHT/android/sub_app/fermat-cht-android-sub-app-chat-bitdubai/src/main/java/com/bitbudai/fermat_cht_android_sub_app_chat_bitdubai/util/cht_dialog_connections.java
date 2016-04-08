@@ -215,7 +215,7 @@ public class cht_dialog_connections extends FermatDialog<FermatSession, SubAppRe
                                                             public void onDismiss(DialogInterface dialog) {
                                                                 if (customAlert.getStatusAddContact() == true) {
                                                                     act_vista = true;
-                                                                }Chat Error · Issue #140 · Fermat-ORG/beta-testing-program · GitHub
+                                                                }
                                                             }
                                                         });
                                                     } else {
