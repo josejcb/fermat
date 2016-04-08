@@ -204,7 +204,7 @@ public class cht_dialog_connections extends FermatDialog<FermatSession, SubAppRe
                                             if(pos >= 0) {
                                                 final ContactConnection contactConn = chatManager.getContactConnectionByContactId(contactid.get(pos));
                                                 if (contactConn != null) {
-                                                    if (chatManager.getContactByLocalPublicKey(contactConn.getRemoteActorPublicKey()) == null) {
+                                                    //if (chatManager.getContactByLocalPublicKey(contactConn.getRemoteActorPublicKey()) == null) {
                                                         if (contactConn.getRemoteName() != null) {
                                                             final cht_dialog_yes_no customAlert = new cht_dialog_yes_no(getActivity(), getSession(), null, contactConn, mAdapterCallback);
                                                             customAlert.setTextBody("Do you want to add " + contactConn.getRemoteName() + " to your Contact List?");
@@ -223,10 +223,10 @@ public class cht_dialog_connections extends FermatDialog<FermatSession, SubAppRe
                                                             dismiss();
                                                             Log.i("CHT add contacts", "null name connection");
                                                         }
-                                                    } else {
-                                                        Toast.makeText(getActivity(), "Contact already exist", Toast.LENGTH_SHORT).show();
-                                                        dismiss();
-                                                    }
+//                                                    } else {
+//                                                        Toast.makeText(getActivity(), "Contact already exist", Toast.LENGTH_SHORT).show();
+//                                                        dismiss();
+//                                                    }
                                                 } else {
                                                     dismiss();
                                                     Log.i("CHT add contacts", "null connection");
