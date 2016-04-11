@@ -1,6 +1,8 @@
 package com.bitbudai.fermat_cht_android_sub_app_chat_bitdubai.adapters;
 
+import android.app.Activity;
 import android.content.Context;
+import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
@@ -9,6 +11,7 @@ import android.graphics.Rect;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Handler;
 import android.os.SystemClock;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -16,18 +19,23 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.util.AttributeSet;
+import android.util.DisplayMetrics;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.ScrollView;
 import android.widget.Toast;
 import android.support.v7.widget.Toolbar;
 
+import com.bitbudai.fermat_cht_android_sub_app_chat_bitdubai.fragments.ChatFragment;
 import com.bitbudai.fermat_cht_android_sub_app_chat_bitdubai.models.ChatMessage;
 import com.bitbudai.fermat_cht_android_sub_app_chat_bitdubai.sessions.ChatSession;
 import com.bitbudai.fermat_cht_android_sub_app_chat_bitdubai.settings.ChatSettings;
@@ -266,12 +274,117 @@ public class ChatAdapterView extends LinearLayout {
         }
     }
 
+//    @Override
+//    public void onConfigurationChanged(Configuration newConfig) {
+//        super.onConfigurationChanged(newConfig);
+//        // Checks whether a hardware keyboard is available
+//        if (newConfig.hardKeyboardHidden == Configuration.HARDKEYBOARDHIDDEN_NO) {
+//            Toast.makeText(getContext(), "keyboard visible", Toast.LENGTH_SHORT).show();
+//        } else if (newConfig.hardKeyboardHidden == Configuration.HARDKEYBOARDHIDDEN_YES) {
+//            Toast.makeText(getContext(), "keyboard hidden", Toast.LENGTH_SHORT).show();
+//        }
+//    }
+
+//    @Override
+//    protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+//        final int proposedheight = View.MeasureSpec.getSize(heightMeasureSpec);
+//        final int actualHeight = getHeight();
+//
+//        if (actualHeight > proposedheight){
+//            Toast.makeText(getContext(), "keyboard visible", Toast.LENGTH_SHORT).show();
+//        } else {
+//            Toast.makeText(getContext(), "keyboard hidden", Toast.LENGTH_SHORT).show();
+//        }
+//
+//        super.onMeasure(widthMeasureSpec, heightMeasureSpec);
+//    }
+
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event)  {
+        if (keyCode == KeyEvent.KEYCODE_BACK && event.getRepeatCount() == 0) {
+            onBackPressed();
+        }
+        return super.onKeyDown(keyCode, event);
+    }
+
+    public void onBackPressed() {
+        final int actualHeight = getHeight();
+        FrameLayout.LayoutParams layoutParams =
+                (FrameLayout.LayoutParams) messagesContainer.getLayoutParams();
+        //Toast.makeText(getContext(), "keyboard hidden", Toast.LENGTH_SHORT).show();
+        layoutParams.height = 764;
+        messagesContainer.setLayoutParams(layoutParams);
+    }
+
+    public void onAdjustKeyboard() {
+//        final int proposedheight = View.MeasureSpec.getSize(MeasureSpec.EXACTLY);
+//        final int actualHeight = getHeight();
+        FrameLayout.LayoutParams layoutParams =
+                (FrameLayout.LayoutParams) messagesContainer.getLayoutParams();
+        //if (actualHeight > proposedheight && (messagesContainer.getLayoutParams().height != 400)){
+            //Toast.makeText(getContext(), "keyboard visible", Toast.LENGTH_SHORT).show();
+        layoutParams.height = 490;
+//        }else{
+//            layoutParams.height =actualHeight;
+//        }
+        messagesContainer.setLayoutParams(layoutParams);
+    }
+
+    @Override
+    public boolean onKeyPreIme(int keyCode, KeyEvent event) {
+        if (event.getKeyCode() == KeyEvent.KEYCODE_BACK) {
+            onBackPressed();
+        }
+        return super.dispatchKeyEvent(event);
+    }
+
+    private boolean isKeyboardShown(View rootView) {
+    /* 128dp = 32dp * 4, minimum button height 32dp and generic 4 rows soft keyboard */
+        final int SOFT_KEYBOARD_HEIGHT_DP_THRESHOLD = 128;
+
+        Rect r = new Rect();
+        rootView.getWindowVisibleDisplayFrame(r);
+        DisplayMetrics dm = rootView.getResources().getDisplayMetrics();
+    /* heightDiff = rootView height - status bar height (r.top) - visible frame height (r.bottom - r.top) */
+        int heightDiff = rootView.getBottom() - r.bottom;
+    /* Threshold size: dp to pixels, multiply with display density */
+        boolean isKeyboardShown = heightDiff > SOFT_KEYBOARD_HEIGHT_DP_THRESHOLD * dm.density;
+
+        return isKeyboardShown;
+    }
+
+//    @Override
+//    protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+//        final int proposedheight = MeasureSpec.getSize(heightMeasureSpec);
+//        final int actualHeight = getHeight();
+//        if ( (proposedheight - actualHeight) < 100){
+//            onAdjustKeyboard();
+//        }else if(((proposedheight - actualHeight) >99) && ((proposedheight - actualHeight) < 200)){
+//            FrameLayout.LayoutParams layoutParams =
+//                   (FrameLayout.LayoutParams) messagesContainer.getLayoutParams();
+//            layoutParams.height = proposedheight;
+//        }
+//
+//        super.onMeasure(widthMeasureSpec, heightMeasureSpec);
+//    }
+
     public void initControls() {
         messagesContainer = (RecyclerView) findViewById(R.id.messagesContainer);
-        messagesContainer.setLayoutManager(new LinearLayoutManager(this.getContext(), LinearLayoutManager.VERTICAL, false));
+        messagesContainer.setLayoutManager(new LinearLayoutManager(this.getContext(), LinearLayoutManager.VERTICAL, true));
         messageET = (EditText) findViewById(R.id.messageEdit);
         sendBtn = (Button) findViewById(R.id.chatSendButton);
-        mSwipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipe_container);
+        messageET.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+            @Override
+            public void onGlobalLayout() {
+                if (android.os.Build.VERSION.SDK_INT <= Build.VERSION_CODES.KITKAT) {
+                    if (!isKeyboardShown(messageET.getRootView())) {
+                        onBackPressed();
+                    }else onAdjustKeyboard();
+                }
+            }
+        });
+        //mSwipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipe_container);
         //adapter = new ChatAdapter(getContext(), (chatHistory != null) ? chatHistory : new ArrayList<ChatMessage>());
         //messagesContainer.setAdapter(adapter);
         //messageET.setText("Type message");
@@ -296,6 +409,17 @@ public class ChatAdapterView extends LinearLayout {
                 toolbar.setLogo(contactIconCircular);
             }
         }
+
+//        final View activityRootView = findViewById(R.id.);
+//        activityRootView.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+//            @Override
+//            public void onGlobalLayout() {
+//                int heightDiff = activityRootView.getRootView().getHeight() - activityRootView.getHeight();
+//                if (heightDiff > 100) { // if more than 100 pixels, its probably a keyboard...
+//                    ... do something here
+//                }
+//            }
+//        });
         //companionLabel.setText(leftName);
 //        } else {
 //            companionLabel.setText("Contacto");
@@ -304,11 +428,17 @@ public class ChatAdapterView extends LinearLayout {
         //if (background != -1) {
         //    container.setBackgroundColor(background);
         //}
-
-        messageET.setOnClickListener(new View.OnClickListener() {
+        //messageET.requestFocus();
+        messageET.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
-            public void onClick(View v) {
+            public void onFocusChange (View v, boolean b) {
                 //messageET.setText("");
+                if (android.os.Build.VERSION.SDK_INT <= Build.VERSION_CODES.KITKAT) {
+                    if (!v.hasFocus())
+                    {
+                        onBackPressed();
+                    }
+                }
             }
         });
 
@@ -326,6 +456,21 @@ public class ChatAdapterView extends LinearLayout {
 //                return false;
 //            }
 //        });
+        messagesContainer.setScrollContainer(true);
+        messagesContainer.addOnLayoutChangeListener(new OnLayoutChangeListener() {
+            @Override
+            public void onLayoutChange(View v, int left, int top, int right, int bottom, int oldLeft, int oldTop, int oldRight, int oldBottom) {
+                if ( bottom < oldBottom) {
+                    final int bottomPosition=bottom;
+                    messagesContainer.postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            messagesContainer.smoothScrollToPosition(bottomPosition);// scrollToPosition
+                        }
+                    }, 100);
+                }
+            }
+        });
 
         sendBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -768,6 +913,5 @@ public class ChatAdapterView extends LinearLayout {
 //        notifyDataSetChanged();
 //
 //    }
-
 
 }

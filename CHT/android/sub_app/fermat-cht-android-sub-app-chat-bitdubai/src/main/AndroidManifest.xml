@@ -5,8 +5,11 @@
     <application android:allowBackup="true" android:label="@string/app_name"
         android:theme="@style/Theme.AppTheme"
         android:supportsRtl="true"
-        android:windowSoftInputMode="adjustPan">
-<!-- or  android:windowSoftInputMode="adjustResize|stateHidden" >
+        android:windowSoftInputMode="adjustResize">
+<!--
+        android:windowSoftInputMode="adjustPan"
+        or  android:windowSoftInputMode="adjustResize|stateHidden" >
+android:screenOrientation="sensorPortrait"
 before: adjustResize|stateAlwaysHidden -->
     </application>
 </manifest>

@@ -1,14 +1,24 @@
 package com.bitbudai.fermat_cht_android_sub_app_chat_bitdubai.fragments;
 
+import android.app.Activity;
+import android.content.res.Configuration;
+import android.graphics.Rect;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
+import android.util.DisplayMetrics;
+import android.util.Log;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
 import android.view.WindowManager;
+import android.widget.FrameLayout;
+import android.widget.Toast;
 
 import com.bitbudai.fermat_cht_android_sub_app_chat_bitdubai.adapters.ChatAdapterView;
 import com.bitbudai.fermat_cht_android_sub_app_chat_bitdubai.sessions.ChatSession;
@@ -54,6 +64,7 @@ public class ChatFragment extends AbstractFermatFragment {//ActionBarActivity
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
         try {
             chatSession = ((ChatSession) appSession);
             moduleManager = chatSession.getModuleManager();
@@ -105,6 +116,77 @@ public class ChatFragment extends AbstractFermatFragment {//ActionBarActivity
     }
 
     @Override
+    public void onBackPressed() {
+        adapter.onBackPressed();
+    }
+
+//    public interface KeyboardVisibilityListener {
+//        void onKeyboardVisibilityChanged(boolean keyboardVisible);
+//    }
+
+//    public static void setKeyboardVisibilityListener(Activity activity, final ChatFragment.KeyboardVisibilityListener keyboardVisibilityListener) {
+//        final View contentView = activity.findViewById(android.R.id.content);
+//        final ChatAdapterView adapter = adapter;
+//        contentView.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+//            private int mPreviousHeight;
+//            @Override
+//            public void onGlobalLayout() {
+//                int newHeight = contentView.getHeight();
+//                if (mPreviousHeight != 0) {
+//                    if (mPreviousHeight > newHeight) {
+//                        // Height decreased: keyboard was shown
+//                        keyboardVisibilityListener.onKeyboardVisibilityChanged(true);
+//                    } else if (mPreviousHeight < newHeight) {
+//                        adapter.onBackPressed();
+//                        keyboardVisibilityListener.onKeyboardVisibilityChanged(false);
+//                    } else {
+//                        // No change
+//                    }
+//                }
+//                mPreviousHeight = newHeight;
+//            }
+//        });
+//    }
+
+
+
+
+//    @Override
+//    public void onConfigurationChanged(Configuration newConfig) {
+//        super.onConfigurationChanged(newConfig);
+//        // Checks whether a hardware keyboard is available
+//        if (newConfig.hardKeyboardHidden == Configuration.HARDKEYBOARDHIDDEN_NO) {
+//            Toast.makeText(getActivity(), "keyboard visible", Toast.LENGTH_SHORT).show();
+//        } else if (newConfig.hardKeyboardHidden == Configuration.HARDKEYBOARDHIDDEN_YES) {
+//            Toast.makeText(getActivity(), "keyboard hidden", Toast.LENGTH_SHORT).show();
+//        }
+//    }
+//
+//    boolean isOpened = false;
+//
+//    public void setListenerToRootView(){
+//        final View activityRootView = getActivity().getWindow().getDecorView().findViewById(android.R.id.content);
+//        activityRootView.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+//            @Override
+//            public void onGlobalLayout() {
+//
+//                int heightDiff = activityRootView.getRootView().getHeight() - activityRootView.getHeight();
+//                if (heightDiff > 100) { // 99% of the time the height diff will be due to a keyboard.
+//                    Toast.makeText(getActivity(), "Gotcha!!! softKeyboardup", Toast.LENGTH_LONG).show();
+//
+//                    if (isOpened == false) {
+//                        //Do two things, make the view top visible and the editText smaller
+//                    }
+//                    isOpened = true;
+//                } else if (isOpened == true) {
+//                    Toast.makeText(getActivity(), "softkeyborad Down!!!", Toast.LENGTH_LONG).show();
+//                    isOpened = false;
+//                }
+//            }
+//        });
+//    }
+
+    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {//private void initControls() {}
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
@@ -113,8 +195,8 @@ public class ChatFragment extends AbstractFermatFragment {//ActionBarActivity
             }
         });
         getActivity().getWindow().setBackgroundDrawableResource(R.drawable.cht_background);
-        getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
-        //setContentView(R.layout.activity_login_layout);
+        getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
+        //getActivity().setContentView(R.layout.chat);
         //getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
         adapter=new ChatAdapterView.Builder(inflater.getContext())
                 .insertInto(container)
