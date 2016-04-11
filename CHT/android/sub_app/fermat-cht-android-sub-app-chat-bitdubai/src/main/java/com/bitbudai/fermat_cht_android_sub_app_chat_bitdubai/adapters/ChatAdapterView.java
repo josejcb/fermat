@@ -302,8 +302,10 @@ public class ChatAdapterView extends LinearLayout {
 
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event)  {
-        if (keyCode == KeyEvent.KEYCODE_BACK && event.getRepeatCount() == 0) {
-            onBackPressed();
+        if (android.os.Build.VERSION.SDK_INT <= Build.VERSION_CODES.KITKAT) {
+            if (keyCode == KeyEvent.KEYCODE_BACK && event.getRepeatCount() == 0) {
+                onBackPressed();
+            }
         }
         return super.onKeyDown(keyCode, event);
     }
@@ -324,7 +326,7 @@ public class ChatAdapterView extends LinearLayout {
                 (FrameLayout.LayoutParams) messagesContainer.getLayoutParams();
         //if (actualHeight > proposedheight && (messagesContainer.getLayoutParams().height != 400)){
             //Toast.makeText(getContext(), "keyboard visible", Toast.LENGTH_SHORT).show();
-        layoutParams.height = 490;
+        layoutParams.height = 440;
 //        }else{
 //            layoutParams.height =actualHeight;
 //        }
@@ -333,22 +335,21 @@ public class ChatAdapterView extends LinearLayout {
 
     @Override
     public boolean onKeyPreIme(int keyCode, KeyEvent event) {
-        if (event.getKeyCode() == KeyEvent.KEYCODE_BACK) {
-            onBackPressed();
+        if (android.os.Build.VERSION.SDK_INT <= Build.VERSION_CODES.KITKAT) {
+            if (event.getKeyCode() == KeyEvent.KEYCODE_BACK) {
+                onBackPressed();
+            }
         }
         return super.dispatchKeyEvent(event);
     }
 
     private boolean isKeyboardShown(View rootView) {
-    /* 128dp = 32dp * 4, minimum button height 32dp and generic 4 rows soft keyboard */
         final int SOFT_KEYBOARD_HEIGHT_DP_THRESHOLD = 128;
-
         Rect r = new Rect();
         rootView.getWindowVisibleDisplayFrame(r);
         DisplayMetrics dm = rootView.getResources().getDisplayMetrics();
-    /* heightDiff = rootView height - status bar height (r.top) - visible frame height (r.bottom - r.top) */
         int heightDiff = rootView.getBottom() - r.bottom;
-    /* Threshold size: dp to pixels, multiply with display density */
+        // Threshold size: dp to pixels, multiply with display density
         boolean isKeyboardShown = heightDiff > SOFT_KEYBOARD_HEIGHT_DP_THRESHOLD * dm.density;
 
         return isKeyboardShown;
@@ -371,7 +372,7 @@ public class ChatAdapterView extends LinearLayout {
 
     public void initControls() {
         messagesContainer = (RecyclerView) findViewById(R.id.messagesContainer);
-        messagesContainer.setLayoutManager(new LinearLayoutManager(this.getContext(), LinearLayoutManager.VERTICAL, true));
+        messagesContainer.setLayoutManager(new LinearLayoutManager(this.getContext(), LinearLayoutManager.VERTICAL, false));
         messageET = (EditText) findViewById(R.id.messageEdit);
         sendBtn = (Button) findViewById(R.id.chatSendButton);
         messageET.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
@@ -429,7 +430,7 @@ public class ChatAdapterView extends LinearLayout {
         //    container.setBackgroundColor(background);
         //}
         //messageET.requestFocus();
-        messageET.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+        /*messageET.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange (View v, boolean b) {
                 //messageET.setText("");
@@ -440,7 +441,7 @@ public class ChatAdapterView extends LinearLayout {
                     }
                 }
             }
-        });
+        });*/
 
 //        messageET.setOnTouchListener(new OnTouchListener() {
 //            public boolean onTouch(View view, MotionEvent event) {
@@ -456,8 +457,8 @@ public class ChatAdapterView extends LinearLayout {
 //                return false;
 //            }
 //        });
-        messagesContainer.setScrollContainer(true);
-        messagesContainer.addOnLayoutChangeListener(new OnLayoutChangeListener() {
+        //messagesContainer.setScrollContainer(true);
+        /*messagesContainer.addOnLayoutChangeListener(new OnLayoutChangeListener() {
             @Override
             public void onLayoutChange(View v, int left, int top, int right, int bottom, int oldLeft, int oldTop, int oldRight, int oldBottom) {
                 if ( bottom < oldBottom) {
@@ -470,7 +471,7 @@ public class ChatAdapterView extends LinearLayout {
                     }, 100);
                 }
             }
-        });
+        });*/
 
         sendBtn.setOnClickListener(new View.OnClickListener() {
             @Override

@@ -64,7 +64,7 @@ public class ChatFragment extends AbstractFermatFragment {//ActionBarActivity
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
+        //getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
         try {
             chatSession = ((ChatSession) appSession);
             moduleManager = chatSession.getModuleManager();
@@ -115,10 +115,10 @@ public class ChatFragment extends AbstractFermatFragment {//ActionBarActivity
         }
     }
 
-    @Override
-    public void onBackPressed() {
-        adapter.onBackPressed();
-    }
+//    @Override
+//    public void onBackPressed() {
+//        adapter.onBackPressed();
+//    }
 
 //    public interface KeyboardVisibilityListener {
 //        void onKeyboardVisibilityChanged(boolean keyboardVisible);
