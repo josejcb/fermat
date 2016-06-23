@@ -56,15 +56,7 @@
         <!-- Falta darle el permiso a alguien para que pueda o no apagar el servicio este -->
 
 
-        <activity
-            android:name="com.bitdubai.android_core.app.EditableWalletActivity"
-            android:configChanges="orientation"
-            android:screenOrientation="portrait"
-            >
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.bitdubai.android_core.app.AppActivity"/>
-        </activity>
+
         <activity
             android:name="com.bitdubai.android_core.app.AppActivity"
             android:theme="@style/AppTheme.NoActionBar"
@@ -161,7 +153,7 @@
 
         <service android:name="com.bitdubai.android_core.app.common.version_1.apps_manager.FermatAppsManagerService"/>
         <service android:name="com.bitdubai.android_core.app.common.version_1.communication.client_system_broker.ClientSystemBrokerServiceAIDL"/>
-        <service android:name="com.bitdubai.android_core.app.common.version_1.communication.server_system_broker.aidl.PlatformService"
+        <service android:name="com.bitdubai.android_core.app.common.version_1.communication.platform_service.aidl.PlatformService"
             android:process=":commerverSerice"
             android:exported="true">
             <intent-filter>
