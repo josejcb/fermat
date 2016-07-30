@@ -1,19 +1,20 @@
 package com.bitdubai.fermat_android_api.layer.definition.wallet.interfaces;
 
 import android.content.Context;
-import android.view.View;
 
+import com.bitdubai.fermat_android_api.core.ResourceSearcher;
 import com.bitdubai.fermat_android_api.engine.FermatApplicationCaller;
 import com.bitdubai.fermat_android_api.engine.FermatApplicationSession;
 import com.bitdubai.fermat_android_api.engine.NotificationPainter;
 import com.bitdubai.fermat_api.layer.all_definition.common.system.utils.PluginVersionReference;
+import com.bitdubai.fermat_api.layer.osa_android.broadcaster.FermatBundle;
 
 import java.lang.ref.WeakReference;
 
 /**
  * Created by Matias Furszyfer on 2015.12.09..
  */
-public abstract class AppConnections<S extends FermatSession> implements FermatAppConnection{
+public abstract class AppConnections<S extends FermatSession> implements FermatAppConnection {
 
     private WeakReference<Context> activity;
     private S fullyLoadedSession;
@@ -33,10 +34,9 @@ public abstract class AppConnections<S extends FermatSession> implements FermatA
         this.fullyLoadedSession = session;
     }
 
-    public S getFullyLoadedSession(){
+    public S getFullyLoadedSession() {
         return fullyLoadedSession;
     }
-
 
 
     public void setActivity(WeakReference<Context> activity) {
@@ -44,24 +44,32 @@ public abstract class AppConnections<S extends FermatSession> implements FermatA
     }
 
 
-    public NotificationPainter getNotificationPainter(String code){
+    public NotificationPainter getNotificationPainter(String code) {
+        return null;
+    }
+
+    public NotificationPainter getNotificationPainter(FermatBundle fermatBundle) {
         return null;
     }
 
 
-    protected  FermatSession getSession(){return null;};
+    protected FermatSession getSession() {
+        return null;
+    }
+
+    ;
 
 
     public void changeApp(String appPublicKey) throws Exception {
         getApplicationManager().openFermatApp(appPublicKey);
     }
 
-    public void goHome(){
+    public void goHome() {
         getApplicationManager().openFermatHome();
     }
 
-    public FermatApplicationCaller getApplicationManager(){
-        return ((FermatApplicationSession)(activity.get()).getApplicationContext()).getApplicationManager();
+    public FermatApplicationCaller getApplicationManager() {
+        return ((FermatApplicationSession) (activity.get()).getApplicationContext()).getApplicationManager();
     }
 
 
@@ -73,26 +81,7 @@ public abstract class AppConnections<S extends FermatSession> implements FermatA
         this.activity = new WeakReference<Context>(context);
     }
 
-
-    /**
-     *  Method to share resources with other apps
-     * @param id
-     * @return
-     */
-
-    public int getResource(int id) {
-        return 0;
-    }
-
-
-    /**
-     *  Method to share Views with other apps
-     *
-     * @param activity
-     * @param resourceId
-     * @return
-     */
-    public View getSharedView(Context activity, int resourceId) {
+    public ResourceSearcher getResourceSearcher() {
         return null;
     }
 }

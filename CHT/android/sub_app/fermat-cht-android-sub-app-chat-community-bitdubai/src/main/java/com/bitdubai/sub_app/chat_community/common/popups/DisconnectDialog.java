@@ -28,6 +28,7 @@ import com.bitdubai.fermat_cht_api.layer.sup_app_module.interfaces.chat_actor_co
 import com.bitdubai.fermat_pip_api.layer.network_service.subapp_resources.SubAppResourcesProviderManager;
 import com.bitdubai.fermat_api.layer.all_definition.common.system.interfaces.error_manager.enums.UnexpectedUIExceptionSeverity;
 import com.bitdubai.sub_app.chat_community.R;
+import com.bitdubai.sub_app.chat_community.adapters.CommunityListAdapter;
 import com.bitdubai.sub_app.chat_community.constants.Constants;
 import com.bitdubai.sub_app.chat_community.session.ChatUserSubAppSessionReferenceApp;
 
@@ -54,6 +55,8 @@ public class DisconnectDialog
     private CharSequence   username    ;
     private CharSequence   title       ;
 
+    private AdapterCallbackList mAdapterCallbackList;
+
     private final ChatActorCommunityInformation chatUserInformation;
     private final ChatActorCommunitySelectableIdentity identity;
 
@@ -61,14 +64,15 @@ public class DisconnectDialog
                             final ReferenceAppFermatSession<ChatActorCommunitySubAppModuleManager> chatUserSubAppSession,
                             final SubAppResourcesProviderManager subAppResources,
                             final ChatActorCommunityInformation chatUserInformation,
-                            final ChatActorCommunitySelectableIdentity identity) {
+                            final ChatActorCommunitySelectableIdentity identity,
+                            final AdapterCallbackList adapterCallbackList) {
 
         super(activity, chatUserSubAppSession, subAppResources);
 
         this.chatUserInformation = chatUserInformation;
         this.identity = identity;
+        this.mAdapterCallbackList = adapterCallbackList;
     }
-
 
     @SuppressLint("SetTextI18n")
     @Override
@@ -80,13 +84,19 @@ public class DisconnectDialog
         mTitle = (FermatTextView) findViewById(R.id.title);
         positiveBtn = (FermatButton) findViewById(R.id.positive_button);
         negativeBtn = (FermatButton) findViewById(R.id.negative_button);
-
         positiveBtn.setOnClickListener(this);
         negativeBtn.setOnClickListener(this);
+        if(chatUserInformation!=null){
+            setDescription("Do you want to be disconnected from "+chatUserInformation.getAlias()+"?");
+        }
         mDescription.setText(description != null ? description : "");
-//        mUsername.setText(username != null ? username : "");
+        mUsername.setText(username != null ? username : "");
         mTitle.setText(title != null ? title : "");
+    }
 
+    public static interface AdapterCallbackList extends CommunityListAdapter.AdapterCallbackList{
+        @Override
+        void onMethodCallback(ChatActorCommunityInformation chatActorCommunityInformation);
     }
 
     public void setDescription(CharSequence description) {
@@ -114,16 +124,12 @@ public class DisconnectDialog
 
     @Override
     public void onClick(View v) {
-
         int i = v.getId();
-
         if (i == R.id.positive_button) {
             try {
-                //image null
                 if (chatUserInformation != null && identity != null) {
                     getSession().getModuleManager()
                             .disconnectChatActor(chatUserInformation.getConnectionId());
-
                     SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getContext());
                     prefs.edit().putBoolean("Connected", true).apply();
                     Intent broadcast = new Intent(Constants.LOCAL_BROADCAST_CHANNEL);

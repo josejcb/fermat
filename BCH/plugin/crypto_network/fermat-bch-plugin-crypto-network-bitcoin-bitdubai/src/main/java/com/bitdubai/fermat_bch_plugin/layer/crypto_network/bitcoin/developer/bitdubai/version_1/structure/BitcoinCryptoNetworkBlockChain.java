@@ -2,8 +2,9 @@ package com.bitdubai.fermat_bch_plugin.layer.crypto_network.bitcoin.developer.bi
 
 import com.bitdubai.fermat_api.layer.all_definition.enums.BlockchainNetworkType;
 import com.bitdubai.fermat_api.layer.osa_android.file_system.PluginFileSystem;
-import com.bitdubai.fermat_bch_api.layer.crypto_network.BlockchainNetworkSelector;
+
 import com.bitdubai.fermat_bch_plugin.layer.crypto_network.bitcoin.developer.bitdubai.version_1.exceptions.BlockchainException;
+import com.bitdubai.fermat_bch_plugin.layer.crypto_network.bitcoin.developer.bitdubai.version_1.util.BitcoinBlockchainNetworkSelector;
 
 import org.bitcoinj.core.BlockChain;
 import org.bitcoinj.core.CheckpointManager;
@@ -41,6 +42,7 @@ public class BitcoinCryptoNetworkBlockChain extends DownloadProgressTracker impl
     /**
      * Classes variables
      */
+    final boolean isReset;
     private BlockChain blockChain;
     private BlockStore blockStore;
     private Wallet wallet;
@@ -56,13 +58,14 @@ public class BitcoinCryptoNetworkBlockChain extends DownloadProgressTracker impl
     /**
      * Constructor
      */
-    public BitcoinCryptoNetworkBlockChain(PluginFileSystem pluginFileSystem, NetworkParameters networkParameters, Wallet wallet, Context context) throws BlockchainException {
+    public BitcoinCryptoNetworkBlockChain(boolean isReset, PluginFileSystem pluginFileSystem, NetworkParameters networkParameters, Wallet wallet, Context context) throws BlockchainException {
+        this.isReset = isReset;
         this.pluginFileSystem = pluginFileSystem;
         this.wallet = wallet;
         this.context = context;
         this.networkParameters= this.context.getParams();
 
-        this.BLOCKCHAIN_NETWORK_TYPE = BlockchainNetworkSelector.getBlockchainNetworkType(this.networkParameters);
+        this.BLOCKCHAIN_NETWORK_TYPE = BitcoinBlockchainNetworkSelector.getBlockchainNetworkType(this.networkParameters);
         this.BLOCKCHAIN_PATH = pluginFileSystem.getAppPath();
         this.BLOCKCHAIN_FILENAME = "bitcoin_Blockchain_" + BLOCKCHAIN_NETWORK_TYPE.getCode();
         this.CHECKPOINT_FILENAME = "checkpoints-" + BLOCKCHAIN_NETWORK_TYPE.getCode();
@@ -87,6 +90,13 @@ public class BitcoinCryptoNetworkBlockChain extends DownloadProgressTracker impl
     }
 
     /**
+     * deletes the blockchain
+     */
+    public void deleteBlockchain(){
+        File blockChainFile = new File(BLOCKCHAIN_PATH, BLOCKCHAIN_FILENAME);
+        blockChainFile.delete();
+    }
+    /**
      * Initializes the blockchain and blockstore objects.
      * @throws BlockStoreException if something went wrong and I can't create the blockchain
      */
@@ -108,6 +118,14 @@ public class BitcoinCryptoNetworkBlockChain extends DownloadProgressTracker impl
             // if this is regTest I will delete the blockstore to download it again.
             if (BLOCKCHAIN_NETWORK_TYPE == BlockchainNetworkType.REG_TEST)
                 blockChainFile.delete();
+        }
+
+        /**
+         * If a reset happened, we delete and set as first time to use the checkpoints.
+         */
+        if (isReset){
+            firstTime = true;
+            blockChainFile.delete();
         }
 
 
@@ -133,10 +151,10 @@ public class BitcoinCryptoNetworkBlockChain extends DownloadProgressTracker impl
             if (firstTime){
                 switch (BLOCKCHAIN_NETWORK_TYPE){
                     case TEST_NET:
-                        loadCheckpoint("2016-05-29 15:22:16");
+                        loadCheckpoint("2016-07-13 00:00:43");
                         break;
                     case PRODUCTION:
-                        loadCheckpoint("2016-05-29 15:29:57");
+                        loadCheckpoint("2016-06-30 22:11:25");
                         break;
                 }
             }

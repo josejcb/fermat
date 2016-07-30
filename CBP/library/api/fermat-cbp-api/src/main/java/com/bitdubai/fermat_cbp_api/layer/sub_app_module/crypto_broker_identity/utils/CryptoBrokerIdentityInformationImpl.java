@@ -1,6 +1,6 @@
 package com.bitdubai.fermat_cbp_api.layer.sub_app_module.crypto_broker_identity.utils;
 
-import com.bitdubai.fermat_cbp_api.all_definition.enums.Frequency;
+import com.bitdubai.fermat_api.layer.all_definition.enums.GeoFrequency;
 import com.bitdubai.fermat_cbp_api.layer.identity.crypto_broker.ExposureLevel;
 import com.bitdubai.fermat_cbp_api.layer.sub_app_module.crypto_broker_identity.interfaces.CryptoBrokerIdentityInformation;
 
@@ -13,24 +13,24 @@ public class CryptoBrokerIdentityInformationImpl implements CryptoBrokerIdentity
     private static final int HASH_PRIME_NUMBER_PRODUCT = 3307;
     private static final int HASH_PRIME_NUMBER_ADD = 4153;
 
-    private final String        alias       ;
-    private final String        publicKey   ;
-    private final byte[]        profileImage;
+    private final String alias;
+    private final String publicKey;
+    private final byte[] profileImage;
     private final ExposureLevel exposureLevel;
-    private long   accuracy;
-    private Frequency frequency;
+    private long accuracy;
+    private GeoFrequency frequency;
 
     public CryptoBrokerIdentityInformationImpl(final String alias,
                                                final String publicKey,
                                                final byte[] profileImage,
                                                final ExposureLevel exposureLevel,
                                                final long accuracy,
-                                               final Frequency frequency){
+                                               final GeoFrequency frequency) {
         this.alias = alias;
         this.publicKey = publicKey;
         this.profileImage = profileImage;
         this.exposureLevel = exposureLevel;
-        this.accuracy      = accuracy     ;
+        this.accuracy = accuracy;
         this.frequency = frequency;
     }
 
@@ -60,22 +60,22 @@ public class CryptoBrokerIdentityInformationImpl implements CryptoBrokerIdentity
     }
 
     @Override
-    public Frequency getFrequency() {
+    public GeoFrequency getFrequency() {
         return frequency;
     }
 
-    public boolean equals(Object o){
-        if(!(o instanceof CryptoBrokerIdentityInformation))
+    public boolean equals(Object o) {
+        if (!(o instanceof CryptoBrokerIdentityInformation))
             return false;
         CryptoBrokerIdentityInformation compare = (CryptoBrokerIdentityInformation) o;
         return alias.equals(compare.getAlias()) && this.publicKey.equals(compare.getPublicKey());
     }
 
     @Override
-    public int hashCode(){
+    public int hashCode() {
         int c = 0;
         c += alias.hashCode();
         c += publicKey.hashCode();
-        return 	HASH_PRIME_NUMBER_PRODUCT * HASH_PRIME_NUMBER_ADD + c;
+        return HASH_PRIME_NUMBER_PRODUCT * HASH_PRIME_NUMBER_ADD + c;
     }
 }

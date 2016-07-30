@@ -4,23 +4,30 @@ package com.bitdubai.fermat_api.layer.all_definition.navigation_structure;
 import com.bitdubai.fermat_api.layer.all_definition.navigation_structure.interfaces.FermatFragment;
 import com.bitdubai.fermat_api.layer.all_definition.navigation_structure.interfaces.FermatTab;
 
+import java.io.Serializable;
 
 
 /**
  * Created by Furszyfer Matias on 2015.07.17..
  */
-public class Tab implements FermatTab {
+public class Tab implements FermatTab, Serializable {
 
     /**
      * Tab class member variables
      */
-    String label;
+    private String label;
 
-    byte[] icon;
+    private byte[] icon;
 
-    FermatFragment fragment;
+    private FermatFragment fragment;
 
-    FermatDrawable drawable;
+    private FermatDrawable drawable;
+
+    /**
+     * Custom View for the tab
+     * eg: you can use frameworks view or your custom view
+     */
+    private FermatView fermatView;
 
     /**
      * Tab class constructors
@@ -37,7 +44,7 @@ public class Tab implements FermatTab {
      * Tab class getters
      */
 
-    public String getLabel(){
+    public String getLabel() {
         return this.label;
     }
 
@@ -48,7 +55,7 @@ public class Tab implements FermatTab {
     }
 
 
-    public FermatFragment getFragment(){
+    public FermatFragment getFragment() {
         return fragment;
     }
 
@@ -59,7 +66,7 @@ public class Tab implements FermatTab {
     /**
      * Tab class setters
      */
-    public void setLabel(String texto){
+    public void setLabel(String texto) {
         this.label = texto;
     }
 
@@ -69,6 +76,18 @@ public class Tab implements FermatTab {
 
     public FermatDrawable getDrawable() {
         return drawable;
+    }
+
+    public FermatView getFermatView() {
+        return fermatView;
+    }
+
+    public void setFermatView(FermatView fermatView) {
+        this.fermatView = fermatView;
+    }
+
+    public boolean hasCustomView() {
+        return fermatView != null;
     }
 
     @Override

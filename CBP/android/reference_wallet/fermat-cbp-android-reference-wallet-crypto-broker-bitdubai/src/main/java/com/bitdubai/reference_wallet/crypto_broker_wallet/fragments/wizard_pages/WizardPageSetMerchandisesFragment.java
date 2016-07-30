@@ -3,7 +3,6 @@ package com.bitdubai.reference_wallet.crypto_broker_wallet.fragments.wizard_page
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -30,6 +29,7 @@ import com.bitdubai.fermat_bnk_api.layer.bnk_wallet.bank_money.interfaces.BankAc
 import com.bitdubai.fermat_cbp_api.all_definition.enums.MoneyType;
 import com.bitdubai.fermat_cbp_api.layer.identity.crypto_broker.interfaces.CryptoBrokerIdentity;
 import com.bitdubai.fermat_cbp_api.layer.wallet.crypto_broker.interfaces.setting.CryptoBrokerWalletAssociatedSetting;
+import com.bitdubai.fermat_cbp_api.layer.wallet_module.crypto_broker.CryptoBrokerWalletPreferenceSettings;
 import com.bitdubai.fermat_cbp_api.layer.wallet_module.crypto_broker.interfaces.CBPInstalledWallet;
 import com.bitdubai.fermat_cbp_api.layer.wallet_module.crypto_broker.interfaces.CryptoBrokerWalletModuleManager;
 import com.bitdubai.fermat_wpd_api.layer.wpd_middleware.wallet_manager.exceptions.CantListWalletsException;
@@ -111,7 +111,7 @@ public class WizardPageSetMerchandisesFragment extends AbstractFermatFragment<Re
             }
 
             //Obtain walletSettings or create new wallet settings if first time opening wallet
-            com.bitdubai.fermat_cbp_api.layer.wallet_module.crypto_broker.CryptoBrokerWalletPreferenceSettings walletSettings;
+            CryptoBrokerWalletPreferenceSettings walletSettings;
             try {
                 walletSettings = moduleManager.loadAndGetSettings(appSession.getAppPublicKey());
             } catch (Exception e) {
@@ -119,11 +119,16 @@ public class WizardPageSetMerchandisesFragment extends AbstractFermatFragment<Re
             }
 
             if (walletSettings == null) {
-                walletSettings = new com.bitdubai.fermat_cbp_api.layer.wallet_module.crypto_broker.CryptoBrokerWalletPreferenceSettings();
+                walletSettings = new CryptoBrokerWalletPreferenceSettings();
                 walletSettings.setIsPresentationHelpEnabled(true);
                 moduleManager.persistSettings(appSession.getAppPublicKey(), walletSettings);
             } else {
-                selectedIdentity = moduleManager.getListOfIdentities().get(0);
+                List<CryptoBrokerIdentity> list = moduleManager.getListOfIdentities();
+                if (list != null) {
+                    if (!list.isEmpty())
+                        selectedIdentity = list.get(0);
+                }
+
             }
 
         } catch (Exception ex) {
@@ -185,20 +190,21 @@ public class WizardPageSetMerchandisesFragment extends AbstractFermatFragment<Re
             }
         });
 
+        fragmentContainer.setVisibility(View.VISIBLE);
+        showHelpDialog();
 
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                //If wallet already configured, go directly to wallet
-                if (walletConfigured) {
-                    changeActivity(Activities.CBP_CRYPTO_BROKER_WALLET_HOME, appSession.getAppPublicKey());
-                } else {  //otherwise, show wizard page
-                    fragmentContainer.setVisibility(View.VISIBLE);
-                    showHelpDialog();
-                }
-            }
-        }, 250);
-
+//        new Handler().postDelayed(new Runnable() {
+//            @Override
+//            public void run() {
+        //If wallet already configured, go directly to wallet
+//                if (walletConfigured) {
+//                    changeActivity(Activities.CBP_CRYPTO_BROKER_WALLET_HOME, appSession.getAppPublicKey());
+//                } else {  //otherwise, show wizard page
+//                    fragmentContainer.setVisibility(View.VISIBLE);
+//                    showHelpDialog();
+//                }
+//            }
+//        }, 250);
 
         return layout;
     }
@@ -210,7 +216,7 @@ public class WizardPageSetMerchandisesFragment extends AbstractFermatFragment<Re
             if (haveAssociatedIdentity)
                 return;
 
-            PresentationDialog presentationDialog;
+            final PresentationDialog presentationDialog;
 
             List list = moduleManager.getListOfIdentities();
             if (list != null) {
@@ -223,8 +229,10 @@ public class WizardPageSetMerchandisesFragment extends AbstractFermatFragment<Re
                             .setBody(R.string.cbw_wizard_merchandise_dialog_body)
                             .setTextFooter(R.string.cbw_wizard_merchandise_dialog_footer)
                             .setCheckboxText(R.string.cbw_wizard_not_show_text)
-                            .setIsCheckEnabled(true)
+                            .setVIewColor(R.color.cbw_wizard_merchandises_wallet_button_color)
+                            .setIsCheckEnabled(false)
                             .build();
+                    presentationDialog.show();
 
                 } else {
                     presentationDialog = new PresentationDialog.Builder(getActivity(), appSession)
@@ -235,18 +243,24 @@ public class WizardPageSetMerchandisesFragment extends AbstractFermatFragment<Re
                             .setBody(R.string.cbw_wizard_merchandise_dialog_body)
                             .setTextFooter(R.string.cbw_wizard_merchandise_dialog_footer)
                             .setCheckboxText(R.string.cbw_wizard_not_show_text)
-                            .setIsCheckEnabled(true)
+                            .setVIewColor(R.color.cbw_wizard_merchandises_wallet_button_color)
+                            .setIsCheckEnabled(false)
                             .build();
                 }
 
-
                 presentationDialog.setOnDismissListener(this);
 
-
-                final com.bitdubai.fermat_cbp_api.layer.wallet_module.crypto_broker.CryptoBrokerWalletPreferenceSettings preferenceSettings = moduleManager.loadAndGetSettings(appSession.getAppPublicKey());
+                final CryptoBrokerWalletPreferenceSettings preferenceSettings = moduleManager.loadAndGetSettings(appSession.getAppPublicKey());
                 final boolean showDialog = preferenceSettings.isHomeTutorialDialogEnabled();
-                if (showDialog)
-                    presentationDialog.show();
+                if (showDialog) {
+                    getActivity().runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            presentationDialog.show();
+                        }
+                    });
+                }
+
             }
 
         } catch (FermatException ex) {
@@ -288,7 +302,7 @@ public class WizardPageSetMerchandisesFragment extends AbstractFermatFragment<Re
                                     public void onDismiss(DialogInterface dialog) {
                                         if (!containWallet(selectedItem)) {
                                             FiatCurrency cashCurrency = getCashCurrency(WalletsPublicKeys.CSH_MONEY_WALLET.getCode());
-                                            if(cashCurrency != null) {
+                                            if (cashCurrency != null) {
                                                 selectedItem.setCurrency(cashCurrency);
                                                 stockWallets.add(selectedItem);
                                                 adapter.changeDataSet(stockWallets);
@@ -369,7 +383,7 @@ public class WizardPageSetMerchandisesFragment extends AbstractFermatFragment<Re
                     public void onDismiss(DialogInterface dialog) {
                         if (!containWallet(selectedWallet)) {
 
-                            if(inputDialogCBP.getCreatedBankAccount() != null) {
+                            if (inputDialogCBP.getCreatedBankAccount() != null) {
 
                                 FiatCurrency currency_dialog = inputDialogCBP.getCreatedBankAccount().getCurrencyType();
                                 String account_dialog = inputDialogCBP.getCreatedBankAccount().getAccount();

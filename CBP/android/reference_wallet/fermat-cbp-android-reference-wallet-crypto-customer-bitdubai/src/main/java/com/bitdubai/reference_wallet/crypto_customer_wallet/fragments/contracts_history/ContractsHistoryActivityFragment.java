@@ -6,8 +6,6 @@ import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
@@ -93,11 +91,6 @@ public class ContractsHistoryActivityFragment extends FermatWalletListFragment<C
         noContractsView = layout.findViewById(R.id.ccw_no_contracts);
 
         showOrHideNoContractsView(contractHistoryList.isEmpty());
-    }
-
-    @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        menu.clear();
     }
 
     @Override

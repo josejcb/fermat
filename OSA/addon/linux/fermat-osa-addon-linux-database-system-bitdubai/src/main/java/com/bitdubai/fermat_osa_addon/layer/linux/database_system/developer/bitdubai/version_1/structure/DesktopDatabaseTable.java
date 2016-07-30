@@ -131,6 +131,7 @@ public class DesktopDatabaseTable implements DatabaseTable {
     public void clearAllFilters() {
 
         this.tableFilter = null;
+        this.tableFilterGroup = null;
     }
 
     @Override
@@ -145,7 +146,9 @@ public class DesktopDatabaseTable implements DatabaseTable {
 
     @Override
     public DatabaseTableFilterGroup getNewFilterGroup(List<DatabaseTableFilter> tableFilters, List<DatabaseTableFilterGroup> filterGroups, DatabaseFilterOperator filterOperator) {
-        return null;
+        return new DesktopDatabaseTableFilterGroup(
+                tableFilters, filterGroups, filterOperator
+        );
     }
 
 
@@ -157,8 +160,8 @@ public class DesktopDatabaseTable implements DatabaseTable {
             List<DatabaseRecord> records = record.getValues();
             Map<String, Object> recordUpdateList = new HashMap<>();
 
-            for (DatabaseRecord item: records) {
-                if (item.isChange()){
+            for (DatabaseRecord item : records) {
+                if (item.isChange()) {
                     recordUpdateList.put(item.getName(), item.getValue());
                 }
             }
@@ -183,8 +186,8 @@ public class DesktopDatabaseTable implements DatabaseTable {
          */
 
         List<String> strRecords = new ArrayList<>();
-        List<String> strValues  = new ArrayList<>();
-        List<String> strSigns  = new ArrayList<>();
+        List<String> strValues = new ArrayList<>();
+        List<String> strSigns = new ArrayList<>();
 
         List<DatabaseRecord> records = record.getValues();
 
@@ -194,7 +197,7 @@ public class DesktopDatabaseTable implements DatabaseTable {
             strSigns.add("?");
         }
 
-        String SQL_QUERY = "INSERT INTO " + tableName + "(" + StringUtils.join(strRecords, ",") + ")" + " VALUES (" + StringUtils.join(strSigns, ",") + ")";
+        String SQL_QUERY = new StringBuilder().append("INSERT INTO ").append(tableName).append("(").append(StringUtils.join(strRecords, ",")).append(")").append(" VALUES (").append(StringUtils.join(strSigns, ",")).append(")").toString();
 
         synchronized (connectionPool) {
             try (Connection connection = connectionPool.getConnection();
@@ -258,8 +261,8 @@ public class DesktopDatabaseTable implements DatabaseTable {
         String latitudeField = nearbyLocationOrder.getLatitudeField();
         String longitudeField = nearbyLocationOrder.getLongitudeField();
 
-        String sentence = ", (("+latitude+" - "+latitudeField+") * ("+latitude+" - "+latitudeField+") +" +
-                " ("+longitude+" - "+longitudeField+") * ("+longitude+" - "+longitudeField+")) as "+
+        String sentence = ", ((" + latitude + " - " + latitudeField + ") * (" + latitude + " - " + latitudeField + ") +" +
+                " (" + longitude + " - " + longitudeField + ") * (" + longitude + " - " + longitudeField + ")) as " +
                 nearbyLocationOrder.getDistanceField();
 
         return sentence;
@@ -292,16 +295,16 @@ public class DesktopDatabaseTable implements DatabaseTable {
                 if (nearbyLocationOrderFields.isEmpty())
                     nearbyLocationOrderFields += order.getDistanceField();
                 else
-                    nearbyLocationOrderFields += ", "+order.getDistanceField();
+                    nearbyLocationOrderFields += ", " + order.getDistanceField();
             }
 
-            orderSentence = " ORDER BY "+nearbyLocationOrderFields+ (commonOrder.isEmpty() ? "" : ", "+commonOrder);
+            orderSentence = " ORDER BY " + nearbyLocationOrderFields + (commonOrder.isEmpty() ? "" : ", " + commonOrder);
 
         } else {
             orderSentence = makeOrder();
         }
 
-        String SQL_QUERY = "SELECT * "+nearbyLocationOrderSentence+" FROM " + tableName + makeFilter() + orderSentence + topSentence  + offsetSentence;
+        String SQL_QUERY = "SELECT * " + nearbyLocationOrderSentence + " FROM " + tableName + makeFilter() + orderSentence + topSentence + offsetSentence;
 
         System.out.println(SQL_QUERY);
 
@@ -436,21 +439,21 @@ public class DesktopDatabaseTable implements DatabaseTable {
     }
 
     @Override
-    public void addNearbyLocationOrder(final String              latitudeField ,
-                                       final String              longitudeField,
-                                       final Location            point         ,
-                                       final DatabaseFilterOrder direction     ,
-                                       final String              distanceField ) {
+    public void addNearbyLocationOrder(final String latitudeField,
+                                       final String longitudeField,
+                                       final Location point,
+                                       final DatabaseFilterOrder direction,
+                                       final String distanceField) {
 
         if (tableNearbyLocationOrders == null)
             tableNearbyLocationOrders = new ArrayList<>();
 
         tableNearbyLocationOrders.add(
                 new DesktopDatabaseTableNearbyLocationOrder(
-                        latitudeField ,
+                        latitudeField,
                         longitudeField,
-                        point         ,
-                        direction     ,
+                        point,
+                        direction,
                         distanceField
                 )
         );
@@ -483,12 +486,6 @@ public class DesktopDatabaseTable implements DatabaseTable {
         );
 
         this.tableFilter.add(filter);
-        this.tableFilterGroup = new DesktopDatabaseTableFilterGroup(
-                this.tableFilter,
-                null            ,
-                null
-        );
-
     }
 
     @Override
@@ -504,13 +501,6 @@ public class DesktopDatabaseTable implements DatabaseTable {
                         value.getCode()
                 )
         );
-
-        this.tableFilterGroup = new DesktopDatabaseTableFilterGroup(
-                this.tableFilter,
-                null            ,
-                null
-        );
-
     }
 
     @Override
@@ -538,12 +528,6 @@ public class DesktopDatabaseTable implements DatabaseTable {
         filter.setType(type);
 
         this.tableFilter.add(filter);
-        this.tableFilterGroup = new DesktopDatabaseTableFilterGroup(
-                this.tableFilter,
-                null            ,
-                null
-        );
-
     }
 
     @Override
@@ -552,7 +536,7 @@ public class DesktopDatabaseTable implements DatabaseTable {
         try {
             String query = "DELETE FROM " + tableName;
             database.execSQL(query);
-        }catch (Exception e) {
+        } catch (Exception e) {
             e.printStackTrace();
             throw new CantDeleteRecordException(e);
         }
@@ -571,7 +555,7 @@ public class DesktopDatabaseTable implements DatabaseTable {
             if (!records.isEmpty()) {
                 for (DatabaseRecord record1 : records) {
 
-                    if(record1.getValue() != null) {
+                    if (record1.getValue() != null) {
 
                         if (queryWhereClause.length() > 0) {
                             queryWhereClause += " and ";
@@ -582,7 +566,7 @@ public class DesktopDatabaseTable implements DatabaseTable {
                         queryWhereClause += "'" + record1.getValue() + "'";
                     }
                 }
-            }else{
+            } else {
                 queryWhereClause = null;
             }
 
@@ -612,7 +596,7 @@ public class DesktopDatabaseTable implements DatabaseTable {
     public void setFilterGroup(List<DatabaseTableFilter> filters, List<DatabaseTableFilterGroup> subGroups, DatabaseFilterOperator operator) {
 
         this.tableFilterGroup = new DesktopDatabaseTableFilterGroup(
-                filters  ,
+                filters,
                 subGroups,
                 operator
         );
@@ -670,6 +654,8 @@ public class DesktopDatabaseTable implements DatabaseTable {
         } else {
             //if set group filter
             if (this.tableFilterGroup != null) {
+                filter = makeGroupFilters(this.tableFilterGroup);
+                if (!filter.isEmpty()) return " WHERE " + filter;
                 return makeGroupFilters(this.tableFilterGroup);
             } else {
                 return filter;
@@ -680,7 +666,6 @@ public class DesktopDatabaseTable implements DatabaseTable {
     public String makeGroupFilters(DatabaseTableFilterGroup databaseTableFilterGroup) {
 
         StringBuilder strFilter = new StringBuilder();
-        String filter;
 
         if (databaseTableFilterGroup != null && (databaseTableFilterGroup.getFilters().size() > 0 || databaseTableFilterGroup.getSubGroups().size() > 0)) {
             strFilter.append("(");
@@ -688,10 +673,11 @@ public class DesktopDatabaseTable implements DatabaseTable {
 
             int ix = 0;
 
-            if (databaseTableFilterGroup.getSubGroups() != null){
+            if (databaseTableFilterGroup.getSubGroups() != null) {
 
                 for (DatabaseTableFilterGroup subGroup : databaseTableFilterGroup.getSubGroups()) {
-                    if (subGroup.getFilters().size() > 0 || ix > 0) {
+
+                    if ((subGroup != null && subGroup.getFilters().size() > 0) || ix > 0) {
                         switch (databaseTableFilterGroup.getOperator()) {
                             case AND:
                                 strFilter.append(" AND ");
@@ -703,9 +689,13 @@ public class DesktopDatabaseTable implements DatabaseTable {
                                 strFilter.append(" ");
                         }
                     }
-                    strFilter.append("(");
-                    strFilter.append(makeGroupFilters(subGroup));
-                    strFilter.append(")");
+
+                    String subGroupFilterString = makeGroupFilters(subGroup);
+                    if (!subGroupFilterString.isEmpty()) {
+                        strFilter.append("(");
+                        strFilter.append(makeGroupFilters(subGroup));
+                        strFilter.append(")");
+                    }
                     ix++;
                 }
 
@@ -714,10 +704,7 @@ public class DesktopDatabaseTable implements DatabaseTable {
             strFilter.append(")");
         }
 
-        filter = strFilter.toString();
-        if (strFilter.length() > 0) filter = " WHERE " + filter;
-
-        return filter;
+        return strFilter.toString();
     }
 
     private String makeOrder() {
@@ -832,7 +819,7 @@ public class DesktopDatabaseTable implements DatabaseTable {
                         .append("'");
                 break;
             default:
-                throw new RuntimeException("Database Filter Type not implemented yet. "+filter.getType());
+                throw new RuntimeException("Database Filter Type not implemented yet. " + filter.getType());
         }
         return strFilter.toString();
     }

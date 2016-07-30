@@ -79,7 +79,7 @@ public class ChatActorNetworkServiceSearch extends ChatSearch {
 
                 String city = gson.fromJson(extraData.get(ChatExtraDataJsonAttNames.CITY),String.class);
 
-                chatExposingDataArrayList.add(new ChatExposingData(actorProfile.getIdentityPublicKey(), actorProfile.getAlias(), actorProfile.getPhoto(), country, state, city, status, actorProfile.getLocation(), 0, 0));
+                chatExposingDataArrayList.add(new ChatExposingData(actorProfile.getIdentityPublicKey(), actorProfile.getAlias(), actorProfile.getPhoto(), country, state, city, status, actorProfile.getLocation(), 0, 0, actorProfile.getStatus()));
             }
 
             System.out.println("Chat Actor Network Service Search Test RETURNING LIST OF ACTORS.");
@@ -109,7 +109,9 @@ public class ChatActorNetworkServiceSearch extends ChatSearch {
         try {
 
             DiscoveryQueryParameters discoveryQueryParameters = new DiscoveryQueryParameters(
-                    Actors.CHAT.getCode(),
+                    //TODO:Hay que pasarle null porque no esta implementado de esa forma en p2p
+                    //Actors.CHAT.getCode(),
+                    null,
                     null,
                     null,
                     null,
@@ -145,7 +147,7 @@ public class ChatActorNetworkServiceSearch extends ChatSearch {
 
             String city = gson.fromJson(extraData.get(ChatExtraDataJsonAttNames.CITY), String.class);
 
-            return new ChatExposingData(actorProfile.getIdentityPublicKey(), actorProfile.getAlias(), actorProfile.getPhoto(), country, state, city, status, actorProfile.getLocation(), 0, 0);
+            return new ChatExposingData(actorProfile.getIdentityPublicKey(), actorProfile.getAlias(), actorProfile.getPhoto(), country, state, city, status, actorProfile.getLocation(), 0, 0, actorProfile.getStatus());
 
         } catch (final CantRequestProfileListException e) {
 
@@ -175,18 +177,34 @@ public class ChatActorNetworkServiceSearch extends ChatSearch {
         try {
 
             DiscoveryQueryParameters discoveryQueryParameters = new DiscoveryQueryParameters(
-                    Actors.CHAT.getCode(),
-                    alias,
-                    distance,
-                    null,
-                    publicKey,
-                    deviceLocation,
-                    max,
-                    null,
+                    null, //TODO: Se coloco null ya que leon necesita que esta valor null porque esto solo se usa solo para buscar por publicKey del Actor
                     NetworkServiceType.UNDEFINED,
+                    Actors.CHAT.getCode(),
+                    null,
+                    alias,
+                    null,
+                    deviceLocation,
+                    distance,
+                    true,
+                    null,
+                    max,
                     offSet,
-                    NetworkServiceType.ACTOR_CHAT
-            );
+                    false);
+
+//            DiscoveryQueryParameters discoveryQueryParameters = new DiscoveryQueryParameters(
+//                    Actors.CHAT.getCode(),
+//                    alias,
+//                    distance,
+//                    null,
+//                    //TODO: Se coloco null ya que leon necesita que esta valor null ya que solo esto se usa solo para buscar por publicKey del Actor
+//                    null,//publicKey,
+//                    deviceLocation,
+//                    max,
+//                    null,
+//                    NetworkServiceType.UNDEFINED,
+//                    offSet,
+//                    NetworkServiceType.ACTOR_CHAT
+//            );
 
 
             final List<ActorProfile> list = pluginRoot.getConnection().listRegisteredActorProfiles(discoveryQueryParameters);
@@ -195,21 +213,25 @@ public class ChatActorNetworkServiceSearch extends ChatSearch {
 
             for (final ActorProfile actorProfile : list) {
 
-                JsonParser parser = new JsonParser();
+//                JsonParser parser = new JsonParser();
+//
+//                Gson gson = new Gson();
 
-                Gson gson = new Gson();
+//                if(actorProfile.getExtraData()!=null) {
+//
+//                    JsonObject extraData = parser.parse(actorProfile.getExtraData()).getAsJsonObject();
+//
+//                    String country = gson.fromJson(extraData.get(ChatExtraDataJsonAttNames.COUNTRY), String.class);
+//
+//                    String state = gson.fromJson(extraData.get(ChatExtraDataJsonAttNames.STATE), String.class);
+//
+//                    String status = gson.fromJson(extraData.get(ChatExtraDataJsonAttNames.STATUS), String.class);
+//
+//                    String city = gson.fromJson(extraData.get(ChatExtraDataJsonAttNames.CITY), String.class);
+//                }
+                    System.out.println("************** I\'m a crypto Chat: " + actorProfile.getAlias() + " - " + actorProfile.getStatus());
 
-                JsonObject extraData = parser.parse(actorProfile.getExtraData()).getAsJsonObject();
-
-                String country = gson.fromJson(extraData.get(ChatExtraDataJsonAttNames.COUNTRY), String.class);
-
-                String state = gson.fromJson(extraData.get(ChatExtraDataJsonAttNames.STATE), String.class);
-
-                String status= gson.fromJson(extraData.get(ChatExtraDataJsonAttNames.STATUS),String.class);
-
-                String city = gson.fromJson(extraData.get(ChatExtraDataJsonAttNames.CITY),String.class);
-
-                chatExposingDataArrayList.add(new ChatExposingData(actorProfile.getIdentityPublicKey(), actorProfile.getAlias(), actorProfile.getPhoto(), country, state, city, status, actorProfile.getLocation(), 0, 0));
+                chatExposingDataArrayList.add(new ChatExposingData(actorProfile.getIdentityPublicKey(), actorProfile.getAlias(), actorProfile.getPhoto(), "", "", "", "", actorProfile.getLocation(), 0, 0, actorProfile.getStatus()));
             }
 
             return chatExposingDataArrayList;
@@ -266,7 +288,7 @@ public class ChatActorNetworkServiceSearch extends ChatSearch {
 
                 String city = gson.fromJson(extraData.get(ChatExtraDataJsonAttNames.CITY),String.class);
 
-                chatExposingDataArrayList.add(new ChatExposingData(actorProfile.getIdentityPublicKey(), actorProfile.getAlias(), actorProfile.getPhoto(), country, state, city, status, actorProfile.getLocation(), 0, 0));
+                chatExposingDataArrayList.add(new ChatExposingData(actorProfile.getIdentityPublicKey(), actorProfile.getAlias(), actorProfile.getPhoto(), country, state, city, status, actorProfile.getLocation(), 0, 0, actorProfile.getStatus()));
             }
 
             return chatExposingDataArrayList;
@@ -323,7 +345,7 @@ public class ChatActorNetworkServiceSearch extends ChatSearch {
 
                 String city = gson.fromJson(extraData.get(ChatExtraDataJsonAttNames.CITY),String.class);
 
-                chatExposingDataArrayList.add(new ChatExposingData(actorProfile.getIdentityPublicKey(), actorProfile.getAlias(), actorProfile.getPhoto(), country, state, city, status, actorProfile.getLocation(), 0, 0));
+                chatExposingDataArrayList.add(new ChatExposingData(actorProfile.getIdentityPublicKey(), actorProfile.getAlias(), actorProfile.getPhoto(), country, state, city, status, actorProfile.getLocation(), 0, 0, actorProfile.getStatus()));
             }
 
             return chatExposingDataArrayList;
@@ -380,7 +402,7 @@ public class ChatActorNetworkServiceSearch extends ChatSearch {
 
                 String city = gson.fromJson(extraData.get(ChatExtraDataJsonAttNames.CITY),String.class);
 
-                chatExposingDataArrayList.add(new ChatExposingData(actorProfile.getIdentityPublicKey(), actorProfile.getAlias(), actorProfile.getPhoto(), country, state, city, status, actorProfile.getLocation(), 0, 0));
+                chatExposingDataArrayList.add(new ChatExposingData(actorProfile.getIdentityPublicKey(), actorProfile.getAlias(), actorProfile.getPhoto(), country, state, city, status, actorProfile.getLocation(), 0, 0, actorProfile.getStatus()));
             }
 
             return chatExposingDataArrayList;

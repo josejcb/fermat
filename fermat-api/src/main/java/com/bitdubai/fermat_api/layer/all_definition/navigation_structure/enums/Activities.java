@@ -250,8 +250,10 @@ public enum Activities implements FermatEnum {
     CBP_CRYPTO_BROKER_WALLET_CREATE_NEW_LOCATION_IN_SETTINGS("CBPCBWCNLIS"),
     CBP_CRYPTO_BROKER_WALLET_SETTINGS_BANK_ACCOUNT("CBPCBWSSBA"),
     CBP_CRYPTO_BROKER_WALLET_SETTINGS_STOCK_MERCHANDISES("CBPCBWSSM"),
+    CBP_CRYPTO_BROKER_WALLET_SETTINGS_FEE_MANAGEMENT("CBPCBWSFM"),
     CBP_CRYPTO_BROKER_WALLET_OTHER_SETTINGS("CBPCBWOS"),
     CBP_CRYPTO_BROKER_WALLET_CONTRACT_DETAILS("CBPCBWCD"),
+
 
     // Crypto Customer Wallet
     CBP_CRYPTO_CUSTOMER_WALLET_HOME("CBPCCWH"),
@@ -276,6 +278,7 @@ public enum Activities implements FermatEnum {
     CBP_CRYPTO_CUSTOMER_WALLET_SETTINGS_BANK_ACCOUNTS("CBPCCWSBAS"),
     CBP_CRYPTO_CUSTOMER_WALLET_CREATE_NEW_BANK_ACCOUNT_IN_SETTINGS("CBPCCWCNBAIS"),
     CBP_CRYPTO_CUSTOMER_WALLET_SETTINGS_PROVIDERS("CBPCCWP"),
+    CBP_CRYPTO_CUSTOMER_WALLET_SETTINGS_MANAGEMENT_FEE("CBPCCWSMF"),
     CBP_CRYPTO_CUSTOMER_WALLET_CONTRACT_DETAILS("CBPCCWCD"),
 
 
@@ -402,6 +405,7 @@ public enum Activities implements FermatEnum {
     ART_SUB_APP_ARTIST_COMMUNITY_LOCAL_IDENTITIES_LIST("ASAACLIL"),
 
     ART_FAN_IDENTITY_CREATE_PROFILE("AFICP"),
+    ART_FAN_IDENTITY_TEST_ACTIVITY("AFITA"),
 
     ART_MUSIC_PLAYER_MAIN_ACTIVITY("ARTMPMA"),
 
@@ -427,8 +431,7 @@ public enum Activities implements FermatEnum {
     //Combo Chat
     CHT_COMBO_HOME("CHTCH"),
     CHT_COMBO_PROFILE("CHTCP"),
-    CHT_COMBO_WORLD("CHTW"),
-    ;
+    CHT_COMBO_WORLD("CHTW"),;
 
     private String code;
 
@@ -443,6 +446,8 @@ public enum Activities implements FermatEnum {
         //    }
         //}
         switch (code) {
+            case "AFITA":
+                return Activities.ART_FAN_IDENTITY_TEST_ACTIVITY;
             case "AAICP":
                 return Activities.ART_ARTIST_IDENTITY_CREATE_PROFILE;
             case "TAICP":
@@ -647,6 +652,8 @@ public enum Activities implements FermatEnum {
                 return CBP_CRYPTO_BROKER_WALLET_CREATE_NEW_LOCATION_IN_SETTINGS;
             case "CBPCBWSSM":
                 return CBP_CRYPTO_BROKER_WALLET_SETTINGS_STOCK_MERCHANDISES;
+            case "CBPCBWSFM":
+                return CBP_CRYPTO_BROKER_WALLET_SETTINGS_FEE_MANAGEMENT;
             case "CBPCBWCD":
                 return CBP_CRYPTO_BROKER_WALLET_CONTRACT_DETAILS;
             case "CBPCBWSSBA":
@@ -696,6 +703,8 @@ public enum Activities implements FermatEnum {
                 return CBP_CRYPTO_CUSTOMER_WALLET_SETTINGS_BANK_ACCOUNTS;
             case "CBPCCWP":
                 return CBP_CRYPTO_CUSTOMER_WALLET_SETTINGS_PROVIDERS;
+            case "CBPCCWSMF":
+                return CBP_CRYPTO_CUSTOMER_WALLET_SETTINGS_MANAGEMENT_FEE;
             case "CBPCCWCNBAIS":
                 return CBP_CRYPTO_CUSTOMER_WALLET_CREATE_NEW_BANK_ACCOUNT_IN_SETTINGS;
 
@@ -764,7 +773,7 @@ public enum Activities implements FermatEnum {
 
             case "CCPSAISI":
                 return Activities.CCP_SUB_APP_INTRA_USER_IDENTITY;
-            case "CCPSAIGI":
+            case "CCPSAIIGI":
                 return Activities.CCP_SUB_APP_INTRA_IDENTITY_GEOLOCATION_IDENTITY;
             case "CCPSAIICI":
                 return Activities.CCP_SUB_APP_INTRA_IDENTITY_CREATE_IDENTITY;
@@ -860,8 +869,8 @@ public enum Activities implements FermatEnum {
                 return DAP_WALLET_ASSET_USER_ASSET_REDEEM_SELECT_REDEEMPOINTS;
             case "DWAUSA":
                 return DAP_WALLET_ASSET_USER_SETTINGS_ACTIVITY;
-            case  "DWAUSMN":
-                return  DAP_WALLET_ASSET_USER_SETTINGS_MAIN_NETWORK;
+            case "DWAUSMN":
+                return DAP_WALLET_ASSET_USER_SETTINGS_MAIN_NETWORK;
             case "DWAUSN":
                 return DAP_WALLET_ASSET_USER_SETTINGS_NOTIFICATIONS;
             case "DWRPMA":
@@ -898,11 +907,11 @@ public enum Activities implements FermatEnum {
             case "CHTGI":
                 return Activities.CHT_CHAT_GEOLOCATION_IDENTITY;
             case "CHTBWOD":
-                return  Activities.CHT_CHAT_BROADCAST_WIZARD_ONE_DETAIL;
+                return Activities.CHT_CHAT_BROADCAST_WIZARD_ONE_DETAIL;
             case "CHTBWTD":
-                return  Activities.CHT_CHAT_BROADCAST_WIZARD_TWO_DETAIL;
+                return Activities.CHT_CHAT_BROADCAST_WIZARD_TWO_DETAIL;
             case "CHTBWTSD":
-                return  Activities.CHT_CHAT_BROADCAST_WIZARD_TWO_SCHEDULED_DETAIL;
+                return Activities.CHT_CHAT_BROADCAST_WIZARD_TWO_SCHEDULED_DETAIL;
             case "CHTOPOD":
                 return Activities.CHT_CHAT_OPEN_PROFILE_DETAIL;
             case "CHTOSER":
@@ -945,9 +954,9 @@ public enum Activities implements FermatEnum {
                 return DAP_WALLET_REDEEM_POINT_SETTINGS_MAIN_NETWORK;
             case "DWRPASA":
                 return DAP_WALLET_REDEEM_POINT_ASSET_SETTINGS_ACTIVITY;
-            case"DWRPASN":
+            case "DWRPASN":
                 return DAP_WALLET_REDEEM_POINT_ASSET_SETTINGS_NOTIFICATIONS;
-            case"DAUCAP":
+            case "DAUCAP":
                 return DAP_ASSET_USER_COMMUNITY_ACTIVITY_PROFILE;
             case "DARPCAP":
                 return DAP_ASSET_REDEEM_POINT_COMMUNITY_ACTIVITY_PROFILE;
@@ -1025,42 +1034,42 @@ public enum Activities implements FermatEnum {
                 return TKY_SUB_APP_FAN_IDENTITY_CREATE_IDENTITY_FRAGMENT;
             //FERMAT WALLET
             case "CWRWFWBV1M":
-                return  CWP_WALLET_RUNTIME_WALLET_FERMAT_WALLET_BITDUBAI_VERSION_1_MAIN;
+                return CWP_WALLET_RUNTIME_WALLET_FERMAT_WALLET_BITDUBAI_VERSION_1_MAIN;
             case "CWRWFWBV1T":
-                return  CWP_WALLET_RUNTIME_WALLET_FERMAT_WALLET_BITDUBAI_VERSION_1_TRANSACTIONS;
+                return CWP_WALLET_RUNTIME_WALLET_FERMAT_WALLET_BITDUBAI_VERSION_1_TRANSACTIONS;
             case "CWRWFWBV1PR":
-                return  CWP_WALLET_RUNTIME_WALLET_FERMAT_WALLET_BITDUBAI_VERSION_1_PAYMENT_REQUEST;
+                return CWP_WALLET_RUNTIME_WALLET_FERMAT_WALLET_BITDUBAI_VERSION_1_PAYMENT_REQUEST;
             case "CWRWFWBV1C":
-                return   CWP_WALLET_RUNTIME_WALLET_FERMAT_WALLET_BITDUBAI_VERSION_1_CONTACTS;
+                return CWP_WALLET_RUNTIME_WALLET_FERMAT_WALLET_BITDUBAI_VERSION_1_CONTACTS;
             case "CWRWFWBV1S":
-                return  CWP_WALLET_RUNTIME_WALLET_FERMAT_WALLET_BITDUBAI_VERSION_1_SETTINGS;
+                return CWP_WALLET_RUNTIME_WALLET_FERMAT_WALLET_BITDUBAI_VERSION_1_SETTINGS;
             case "CWRWFWBV1SW":
-                return  CWP_WALLET_RUNTIME_WALLET_FERMAT_WALLET_BITDUBAI_VERSION_1_SEND_WALLET;
+                return CWP_WALLET_RUNTIME_WALLET_FERMAT_WALLET_BITDUBAI_VERSION_1_SEND_WALLET;
             case "CWRWFWBV1CV":
-                return  CWP_WALLET_RUNTIME_WALLET_FERMAT_WALLET_BITDUBAI_VERSION_1_CHUNCK_VALUES;
+                return CWP_WALLET_RUNTIME_WALLET_FERMAT_WALLET_BITDUBAI_VERSION_1_CHUNCK_VALUES;
 
             case "CCPBFWSFA":
-                return  CCP_BITCOIN_FERMAT_WALLET_SEND_FORM_ACTIVITY;
+                return CCP_BITCOIN_FERMAT_WALLET_SEND_FORM_ACTIVITY;
             case "CCPBFWRFA":
-                return  CCP_BITCOIN_FERMAT_WALLET_REQUEST_FORM_ACTIVITY;
+                return CCP_BITCOIN_FERMAT_WALLET_REQUEST_FORM_ACTIVITY;
             case "CCPBFWCDA":
-                return  CCP_BITCOIN_FERMAT_WALLET_CONTACT_DETAIL_ACTIVITY;
+                return CCP_BITCOIN_FERMAT_WALLET_CONTACT_DETAIL_ACTIVITY;
             case "CCPBFWSA":
-                return  CCP_BITCOIN_FERMAT_WALLET_SETTINGS_ACTIVITY;
+                return CCP_BITCOIN_FERMAT_WALLET_SETTINGS_ACTIVITY;
             case "CCPBFWSAN":
-                return  CCP_BITCOIN_FERMAT_WALLET_SETTINGS_ACTIVITY_NOTIFICATIONS;
+                return CCP_BITCOIN_FERMAT_WALLET_SETTINGS_ACTIVITY_NOTIFICATIONS;
             case "CCPBFWSAMN":
-                return  CCP_BITCOIN_FERMAT_WALLET_SETTINGS_ACTIVITY_MAIN_NETWORK;
+                return CCP_BITCOIN_FERMAT_WALLET_SETTINGS_ACTIVITY_MAIN_NETWORK;
             case "CCPBFWACA":
                 return CCP_BITCOIN_FERMAT_WALLET_ADD_CONNECTION_ACTIVITY;
             case "CCPBFWNIA":
-                return   CCP_BITCOIN_FERMAT_WALLET_NO_IDENTITY_ACTIVITY;
+                return CCP_BITCOIN_FERMAT_WALLET_NO_IDENTITY_ACTIVITY;
             case "CCPBFWMNA":
-                return  CCP_BITCOIN_FERMAT_WALLET_MNEMONIC_ACTIVITY;
+                return CCP_BITCOIN_FERMAT_WALLET_MNEMONIC_ACTIVITY;
             case "CCPBFWCVD":
-                return  CCP_BITCOIN_FERMAT_WALLET_CHUNCK_VALUE_DETAIL_ACTIVITY;
+                return CCP_BITCOIN_FERMAT_WALLET_CHUNCK_VALUE_DETAIL_ACTIVITY;
             case "CCPBFSER":
-                return   CCP_BITCOIN_FERMAT_WALLET_OPEN_SEND_ERROR_REPORT;
+                return CCP_BITCOIN_FERMAT_WALLET_OPEN_SEND_ERROR_REPORT;
             //TKY fan Wallet
             case "TKYFWMA":
                 return TKY_FAN_WALLET_MAIN_ACTIVITY;
@@ -1106,7 +1115,7 @@ public enum Activities implements FermatEnum {
                 return CHT_COMBO_WORLD;
             default:
                 throw new InvalidParameterException(
-                        "Code Received: " + code,
+                        new StringBuilder().append("Code Received: ").append(code).toString(),
                         "This code is not valid for the Activities enum"
                 );
         }

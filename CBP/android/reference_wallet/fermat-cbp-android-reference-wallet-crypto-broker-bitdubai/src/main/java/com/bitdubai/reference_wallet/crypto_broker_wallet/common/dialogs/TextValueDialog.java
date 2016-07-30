@@ -17,6 +17,11 @@ import com.bitdubai.fermat_api.layer.pip_engine.interfaces.ResourceProviderManag
 import com.bitdubai.fermat_cbp_api.layer.wallet_module.crypto_broker.interfaces.CryptoBrokerWalletModuleManager;
 import com.bitdubai.reference_wallet.crypto_broker_wallet.R;
 
+import java.math.BigDecimal;
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
+import java.text.ParseException;
+
 import static android.text.InputType.TYPE_CLASS_NUMBER;
 import static android.text.InputType.TYPE_CLASS_TEXT;
 import static android.text.InputType.TYPE_NUMBER_FLAG_DECIMAL;
@@ -36,6 +41,7 @@ public class TextValueDialog extends FermatDialog<ReferenceAppFermatSession<Cryp
 
     private OnClickAcceptListener acceptBtnListener;
     private boolean setTextFree;
+    private NumberFormat numberFormat = DecimalFormat.getInstance();
 
     //TEXT COUNT
     private boolean activeTextCount = false;
@@ -44,9 +50,15 @@ public class TextValueDialog extends FermatDialog<ReferenceAppFermatSession<Cryp
 
     //TEXT COUNT
     private final TextWatcher textWatcher = new TextWatcher() {
-        public void onTextChanged(CharSequence s, int start, int before, int count) {textCount.setText(String.valueOf(maxLenghtTextCount - s.length()));}
-        public void afterTextChanged(Editable s) {}
-        public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+        public void onTextChanged(CharSequence s, int start, int before, int count) {
+            textCount.setText(String.valueOf(maxLenghtTextCount - s.length()));
+        }
+
+        public void afterTextChanged(Editable s) {
+        }
+
+        public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+        }
     };
 
     public interface OnClickAcceptListener {
@@ -111,7 +123,7 @@ public class TextValueDialog extends FermatDialog<ReferenceAppFermatSession<Cryp
         editTextView.setHint(hintStringResource);
 
         //TEXT COUNT
-        if(activeTextCount) {
+        if (activeTextCount) {
             textCount = (FermatTextView) findViewById(R.id.cbw_text_dialog_edit_text_count);
             editTextView.setFilters(new InputFilter[]{new InputFilter.LengthFilter(maxLenghtTextCount)});
             editTextView.addTextChangedListener(textWatcher);
@@ -120,7 +132,21 @@ public class TextValueDialog extends FermatDialog<ReferenceAppFermatSession<Cryp
         }
 
         if (editTextValue != null)
-            editTextView.setText(editTextValue);
+            //change lostwood
+            // editTextView.setText(editTextValue);
+
+            if (editTextValue.equals("0.0")) {
+                editTextView.setText("");
+            } else {
+                if (activeTextCount) {
+                    editTextView.setText(editTextValue);
+                } else {
+                    editTextView.setText(fixFormat(editTextValue).toString());
+                }
+
+            }
+
+
         if (setTextFree)
             editTextView.setInputType(TYPE_CLASS_TEXT | TYPE_TEXT_FLAG_MULTI_LINE);
         else
@@ -138,8 +164,41 @@ public class TextValueDialog extends FermatDialog<ReferenceAppFermatSession<Cryp
     }
 
     //TEXT COUNT
-    public void setTextCount(int maxLenghtText){
+    public void setTextCount(int maxLenghtText) {
         this.maxLenghtTextCount = maxLenghtText;
         this.activeTextCount = true;
+    }
+
+    private String fixFormat(String value) {
+
+        try {
+            if (compareLessThan1(value)) {
+                numberFormat.setMaximumFractionDigits(8);
+            } else {
+                numberFormat.setMaximumFractionDigits(2);
+            }
+            return String.valueOf(new BigDecimal(String.valueOf(numberFormat.parse(numberFormat.format(
+                    Double.valueOf(numberFormat.parse(value).toString()))))));
+        } catch (ParseException e) {
+            e.printStackTrace();
+            return "0";
+        }
+
+    }
+
+
+    private Boolean compareLessThan1(String value) {
+        Boolean lessThan1 = true;
+        try {
+            if (BigDecimal.valueOf(numberFormat.parse(value).doubleValue()).
+                    compareTo(BigDecimal.ONE) == -1) {
+                lessThan1 = true;
+            } else {
+                lessThan1 = false;
+            }
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return lessThan1;
     }
 }

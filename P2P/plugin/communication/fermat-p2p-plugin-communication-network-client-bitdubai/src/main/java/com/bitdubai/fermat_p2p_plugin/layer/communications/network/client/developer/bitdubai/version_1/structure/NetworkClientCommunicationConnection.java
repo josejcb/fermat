@@ -27,6 +27,8 @@ import com.bitdubai.fermat_p2p_api.layer.all_definition.communication.commons.da
 import com.bitdubai.fermat_p2p_api.layer.all_definition.communication.commons.data.client.request.CheckOutProfileMsgRequest;
 import com.bitdubai.fermat_p2p_api.layer.all_definition.communication.commons.data.client.request.NearNodeListMsgRequest;
 import com.bitdubai.fermat_p2p_api.layer.all_definition.communication.commons.data.client.request.UpdateActorProfileMsgRequest;
+import com.bitdubai.fermat_p2p_api.layer.all_definition.communication.commons.data.client.request.UpdateProfileGeolocationMsgRequest;
+import com.bitdubai.fermat_p2p_api.layer.all_definition.communication.commons.enums.UpdateTypes;
 import com.bitdubai.fermat_p2p_api.layer.all_definition.communication.commons.profiles.ActorProfile;
 import com.bitdubai.fermat_p2p_api.layer.all_definition.communication.commons.profiles.ClientProfile;
 import com.bitdubai.fermat_p2p_api.layer.all_definition.communication.commons.profiles.NetworkServiceProfile;
@@ -156,6 +158,7 @@ public class NetworkClientCommunicationConnection implements NetworkClientConnec
         this.isExternalNode         = isExternalNode              ;
         this.pluginRoot             = pluginRoot                  ;
         this.nodesListPosition      = nodesListPosition           ;
+        this.nodeProfile            = nodeProfile                 ;
 
         this.tryToReconnect         = Boolean.TRUE                ;
 
@@ -186,7 +189,7 @@ public class NetworkClientCommunicationConnection implements NetworkClientConnec
                 if(nodesListPosition >= 0){
                     i++;
 
-                    if(i > 4){
+                    if(i > 1){
 
                         pluginRoot.intentToConnectToOtherNode(nodesListPosition);
                         return Boolean.FALSE;
@@ -208,7 +211,7 @@ public class NetworkClientCommunicationConnection implements NetworkClientConnec
                 if(nodesListPosition >= 0){
                     i++;
 
-                    if(i > 4){
+                    if(i > 1){
 
                         pluginRoot.intentToConnectToOtherNode(nodesListPosition);
                         return Boolean.FALSE;
@@ -255,10 +258,10 @@ public class NetworkClientCommunicationConnection implements NetworkClientConnec
 
         try {
 
-            container.connectToServer(networkClientCommunicationChannel, uri);
+            container.asyncConnectToServer(networkClientCommunicationChannel, uri);
 
         } catch (Exception e) {
-            e.printStackTrace();
+            System.out.println(e.getCause());
         }
     }
 
@@ -437,7 +440,52 @@ public class NetworkClientCommunicationConnection implements NetworkClientConnec
     }
 
     @Override
-    public void updateRegisteredProfile(final Profile profile) throws CantUpdateRegisteredProfileException {
+    public void updateRegisteredProfile(final Profile     profile,
+                                        final UpdateTypes type   ) throws CantUpdateRegisteredProfileException {
+
+        switch (type) {
+            case FULL:
+                fullUpdateRegisteredProfile(profile);
+                break;
+            case GEOLOCATION:
+                geolocationUpdateRegisteredProfile(profile);
+                break;
+        }
+    }
+
+    private void geolocationUpdateRegisteredProfile(Profile profile) throws CantUpdateRegisteredProfileException {
+
+        PackageType packageType = PackageType.UPDATE_PROFILE_GEOLOCATION_REQUEST;
+
+        PackageContent profileUpdateMsgRequest = new UpdateProfileGeolocationMsgRequest(
+                profile.getIdentityPublicKey(),
+                profile.getType(),
+                profile.getLocation()
+        );
+        profileUpdateMsgRequest.setMessageContentType(MessageContentType.JSON);
+
+        try {
+
+            sendPackage(profileUpdateMsgRequest, packageType);
+
+        } catch (CantSendPackageException cantSendPackageException) {
+
+            CantUpdateRegisteredProfileException fermatException = new CantUpdateRegisteredProfileException(
+                    cantSendPackageException,
+                    "profile:" + profile,
+                    "Cant send package."
+            );
+
+            pluginRoot.reportError(
+                    UnexpectedPluginExceptionSeverity.DISABLES_SOME_FUNCTIONALITY_WITHIN_THIS_PLUGIN,
+                    fermatException
+            );
+
+            throw fermatException;
+        }
+    }
+
+    private void fullUpdateRegisteredProfile(Profile profile) throws CantUpdateRegisteredProfileException {
 
         PackageContent profileUpdateMsgRequest;
 
@@ -629,7 +677,7 @@ public class NetworkClientCommunicationConnection implements NetworkClientConnec
     public void sendPackageMessage(final PackageContent     packageContent              ,
                                    final NetworkServiceType networkServiceType          ,
                                    final String             destinationIdentityPublicKey) throws CantSendMessageException {
-
+        System.out.println("******* IS CONNECTED: "+ isConnected() + " - TRYING NO SEND = "+ packageContent.toJson());
         if (isConnected()){
 
             try {
@@ -725,9 +773,11 @@ public class NetworkClientCommunicationConnection implements NetworkClientConnec
 
         HttpURLConnection conn = null;
 
+        OutputStream os = null;
+        BufferedReader reader = null;
         try {
 
-            URL url = new URL("http://" + HardcodeConstants.SERVER_IP_DEFAULT + ":" + HardcodeConstants.DEFAULT_PORT + "/fermat/rest/api/v1/profiles/actors");
+            URL url = new URL("http://" + nodeUrl + "/fermat/rest/api/v1/profiles/actors");
 
             String formParameters = "client_public_key=" + URLEncoder.encode(clientIdentity.getPublicKey(), "UTF-8") + "&discovery_params=" + URLEncoder.encode(discoveryQueryParameters.toJson(), "UTF-8");
 
@@ -737,12 +787,13 @@ public class NetworkClientCommunicationConnection implements NetworkClientConnec
             conn.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
             conn.setRequestProperty("Content-Length", Integer.toString(formParameters.length()));
             conn.setRequestProperty("Accept", "application/json");
+            conn.setRequestProperty("Content-Encoding", "gzip");
 
-            OutputStream os = conn.getOutputStream();
+            os = conn.getOutputStream();
             os.write(formParameters.getBytes());
             os.flush();
 
-            BufferedReader reader = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+            reader = new BufferedReader(new InputStreamReader(conn.getInputStream()));
             String respond = reader.readLine();
 
             /*
@@ -776,6 +827,20 @@ public class NetworkClientCommunicationConnection implements NetworkClientConnec
         }finally {
             if (conn != null)
                 conn.disconnect();
+            if(reader!=null){
+                try {
+                    reader.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+            if(os!=null){
+                try {
+                    os.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
         }
 
 
@@ -968,5 +1033,9 @@ public class NetworkClientCommunicationConnection implements NetworkClientConnec
 
     public NodeProfile getNodeProfile() {
         return nodeProfile;
+    }
+
+    public void close() throws IOException {
+        networkClientCommunicationChannel.getClientConnection().close();
     }
 }
