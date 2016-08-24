@@ -273,7 +273,8 @@ public class ChatFragment
         super.onDestroy();
         unbindDrawables(adapterView.getRootView().findViewById(R.id.messagesContainer));
         unbindDrawables(adapterView.getRootView().findViewById(R.id.chatSendButton));
-        adapterView.clean();
+//        unbindDrawables(this.getView());
+        adapterView.onDestroyView();
         adapterView.destroyDrawingCache();
         adapterView.removeView(getView());
         adapterView.removeAllViews();
@@ -282,7 +283,12 @@ public class ChatFragment
         chatSettings = null;
         chatManager = null;
         destroy();
+    }
 
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        adapterView.onDestroyView();
     }
 
     @Override

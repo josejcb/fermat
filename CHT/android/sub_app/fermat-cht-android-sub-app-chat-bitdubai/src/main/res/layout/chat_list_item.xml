@@ -59,12 +59,7 @@
                     android:paddingBottom="7dp"
                     android:paddingRight="20dp"
                     />
-
             </LinearLayout>
-
         </LinearLayout>
     </LinearLayout>
-
-
-
 </RelativeLayout>

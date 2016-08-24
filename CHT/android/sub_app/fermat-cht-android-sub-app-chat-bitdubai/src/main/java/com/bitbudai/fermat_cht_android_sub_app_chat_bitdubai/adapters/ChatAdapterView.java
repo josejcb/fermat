@@ -23,6 +23,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -458,9 +459,13 @@ public class ChatAdapterView extends LinearLayout {
                     @Override
                     public void onGlobalLayout() {
                         if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.KITKAT) {
-                            if (!isKeyboardShown(messageET.getRootView())) {
-                                onBackPressed();
-                            } else onAdjustKeyboard();
+                            if(messageET != null && messageET.getRootView() != null) {
+                                if (!isKeyboardShown(messageET.getRootView())) {
+                                    onBackPressed();
+                                } else {
+                                    onAdjustKeyboard();
+                                }
+                            }
                         }
                     }
                 });
@@ -687,6 +692,16 @@ public class ChatAdapterView extends LinearLayout {
                 }, 2500);
             }
         });*/
+    }
+
+    public void onDestroyView() {
+        rootView= null;
+        layoutManager = null;
+        messagesContainer = null;
+        messageET = null;
+        sendBtn = null;
+        contactIconCircular = null;
+        adapter = null;
     }
 
     public void getFilter(String s) {
