@@ -63,7 +63,7 @@ jobs:
       uses: github/codeql-action/init@v3
       with:
         languages: ${{ matrix.language }}
-        build-mode: ${{ matrix.build-mode }
+        build-mode: ${{ matrix.build-mode }}
         queries: ./gradle/wrapper  # custom query directory
 
         # If you wish to specify custom queries, you can do so here or in a config file.
